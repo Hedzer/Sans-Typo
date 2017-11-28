@@ -1,0 +1,87 @@
+{
+  "name": "sans-typo",
+  "version": "1.0.0",
+  "description": "A simple typing test program that measures accuracy and words per minute.",
+  "main": "index.html",
+  "scripts": {
+    "start": "nw .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hedzer/Sans-Typo.git"
+  },
+  "author": "Hedzer Ferwerda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hedzer/Sans-Typo/issues"
+  },
+  "homepage": "https://github.com/Hedzer/Sans-Typo#readme",
+  "window": {
+    "title": "Sans Typo",
+    "icon": "link.png",
+    "toolbar": true,
+    "frame": false,
+    "width": 800,
+    "height": 500
+  },
+  "webkit": {
+    "plugin": true
+  },
+  "chromium-args" : "--disable-gpu",
+  "parcello": {
+    "namespace": "SansTypo",
+    "folders": {
+      "source": "Source",
+      "build": "build",
+      "dependency": "Dependencies",
+      "external": "External",
+      "tests": "Tests",
+      "documentation": "Documentation"
+    },
+    "profiles": {
+      "default": {
+        "extensions": [
+          "js"
+        ],
+        "source": {
+          "file": "entry.js",
+          "auto-externalize": true
+        },
+        "build": {
+          "file": "SansTypo.js"
+        },
+        "dependency": {
+          "install": {
+            "npm": true,
+            "bower": true,
+            "tsd": true,
+            "typings": true,
+            "composer": true,
+            "pip": true,
+            "git": true
+          },
+          "repos": {},
+          "remap": {},
+          "search": {
+            "active": true,
+            "cache": true,
+            "folders": [
+              "node_modules"
+            ]
+          },
+          "external": {}
+        },
+        "external": {
+          "ignore": [],
+          "copy": []
+        },
+        "tests": {},
+        "documentation": {}
+      }
+    }
+  },
+  "dependencies": {
+    "nw": "^0.26.6"
+  }
+}
