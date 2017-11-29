@@ -6,6 +6,9 @@ import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 
+//Utilities
+import exports from 'Parcello/exports';
+
 const identity = new Identity({
 	namespace: settings.namespace,
 	class: 'Reader',

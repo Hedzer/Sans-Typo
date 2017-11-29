@@ -9,6 +9,9 @@ import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 //Pages
 import Tester from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester';
 
+//Utilities
+import exports from 'Parcello/exports';
+
 const identity = new Identity({
 	namespace: settings.namespace,
 	class: 'TypeSpeed',
