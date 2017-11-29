@@ -6,6 +6,10 @@ import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 
+//Styles
+import framing from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Reader/Styles/framing';
+import theme from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Reader/Styles/theme';
+
 //Utilities
 import exports from 'Parcello/exports';
 
@@ -21,13 +25,14 @@ class Reader extends Div {
 		this.identity = identity;
 	}
 	
-	construct_structure() {
-
-	}
 	construct_style() {
-
+		this.add([ framing ]);
+		this.add(theme);
 	}
 	construct_relationships() {
+
+	}
+	setWords(text) {
 
 	}
 }
