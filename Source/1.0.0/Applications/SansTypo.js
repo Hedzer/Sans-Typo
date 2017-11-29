@@ -2,6 +2,7 @@
 //Classes
 import Application from 'JSUI/Source/1.0.0/Classes/Core/Application';
 import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
+import Tester from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester';
 
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
@@ -36,6 +37,9 @@ class SansTypo extends Application {
 	}
 	static get subroutes() {
 		return [ Guest ];
+	}
+	static get Page() {
+		return Tester;
 	}
 }
 
