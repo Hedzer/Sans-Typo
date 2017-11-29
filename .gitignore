@@ -1,3 +1,10 @@
+
+# Custom Ignores
+[Dd]ependencies
+
+
+# Standard Node Ignores
+
 # Logs
 logs
 *.log
