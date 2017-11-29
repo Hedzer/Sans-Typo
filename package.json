@@ -28,7 +28,7 @@
   "webkit": {
     "plugin": true
   },
-  "chromium-args" : "--disable-gpu",
+  "chromium-args": "--disable-gpu",
   "parcello": {
     "namespace": "SansTypo",
     "folders": {
@@ -61,7 +61,12 @@
             "pip": true,
             "git": true
           },
-          "repos": {},
+          "repos": {
+            "JSUI": {
+              "remote": "https://github.com/Hedzer/JSUI.git",
+              "private": true
+            }
+          },
           "remap": {},
           "search": {
             "active": true,
