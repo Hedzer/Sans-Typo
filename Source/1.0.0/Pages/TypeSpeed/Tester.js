@@ -28,15 +28,13 @@ class Tester extends Page {
 
 	//builds the structural elements in the page
 	construct_structure() {
-		this.add([
-			Reader,
-			Stats,
-			Writer,
-		]);
+		this.add(new Reader()).as('Reader');
+		this.add(new Stats()).as('Stats');
+		this.add(new Writer()).as('Writer');
 	}
 	//styles the elements built in the structural constructor
 	construct_style() {
-		
+
 	}
 	//assigns unique relationships to the structure
 	construct_relationships() {
