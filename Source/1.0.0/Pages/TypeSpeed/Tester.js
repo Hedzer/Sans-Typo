@@ -11,6 +11,16 @@ import Writer from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer';
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 
+//Server
+import getNewPhrase from 'SansTypo/Source/1.0.0/Server/getNewPhrase';
+
+//Styles
+import framing from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/framing';
+import theme from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/theme';
+import reader from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/reader';
+import stats from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/stats';
+import writer from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/writer';
+
 //Utilities
 import exports from 'Parcello/exports';
 
@@ -34,11 +44,23 @@ class Tester extends Page {
 	}
 	//styles the elements built in the structural constructor
 	construct_style() {
-
+		this.add([
+			framing,
+			theme,
+			reader,
+			stats,
+			writer,
+		]);
 	}
 	//assigns unique relationships to the structure
 	construct_relationships() {
+		this.getNewPhrase();
+	}
 
+	getNewPhrase() {
+		getNewPhrase().then((phrase) => {
+			this.Reader.text(phrase);
+		});
 	}
 
 	// defaults
