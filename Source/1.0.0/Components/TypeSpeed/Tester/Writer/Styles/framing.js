@@ -21,6 +21,8 @@ let empty = new Rule(`${selector}:empty`, {
 	paddingLeft:"calc(50% - 100px)",
 });
 
-export default [ framing, empty ];
+let out = [ framing, empty ];
 
-exports(framing).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/framing');
+export default out;
+
+exports(out).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/framing');

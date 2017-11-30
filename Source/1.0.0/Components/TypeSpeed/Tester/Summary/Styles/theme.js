@@ -13,10 +13,6 @@ let theme = new Rule(selector, {
 	zIndex: 2,
 });
 
-let noFocus = new Rule(`${selector}:focus`, {
-    outline: 'none',
-});
-
-export default [ theme, noFocus ];
+export default theme;
 
 exports(theme).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/theme');
