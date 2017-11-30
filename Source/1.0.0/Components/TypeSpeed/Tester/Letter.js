@@ -26,9 +26,10 @@ class Letter extends Span {
 	}
 	set isIncorrect(value) {
 		value = !!value;
-		let hasChanged = this.state('isIncorrect', value); // added for clarity
+		let hasChanged = this.state('isIncorrect', value);
 		if (hasChanged) {
-			this.class('is-incorrect')[value ? 'add' : 'remove']();
+			let action = value ? 'add' : 'remove';
+			this.class('is-incorrect')[action]();
 		}
 	}
 }
