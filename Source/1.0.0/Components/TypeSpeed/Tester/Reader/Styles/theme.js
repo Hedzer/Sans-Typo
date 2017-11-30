@@ -5,11 +5,11 @@ import Rule from 'JSUI/Source/1.0.0/Classes/Style/SheetRule';
 //Utilities
 import exports from 'Parcello/exports';
 
-let selector = '.SansTypo.Reader';
-
-let theme = new Rule(`${selector}`, {
+let theme = new Rule('.SansTypo.Reader', {
 	backgroundColor: 'white',
-	// boxShadow: '0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)',
+	fontFamily: '"Inconsolata", monospace',
+	boxShadow: '0 0 5px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 0, 0, 0.1)',
+	color: '#646464',
 });
 
 export default theme;
