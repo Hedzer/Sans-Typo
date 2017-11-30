@@ -11,7 +11,7 @@ import values from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/values';
 let reader = new Rule(`.SansTypo.Page.Tester .Reader`, {
 	position: 'absolute',
 	top: 0,
-	right: `${values.Stats.width}px`,
+	right: `${values.Summary.width}px`,
 	bottom: "50%",
 	left: 0,
 });

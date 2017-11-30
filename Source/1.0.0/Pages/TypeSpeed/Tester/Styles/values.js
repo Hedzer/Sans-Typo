@@ -1,8 +1,8 @@
 
 const values = {
-	Stats: {
+	Summary: {
 		width: 200
-	}
+	},
 };
 
 export default values;
