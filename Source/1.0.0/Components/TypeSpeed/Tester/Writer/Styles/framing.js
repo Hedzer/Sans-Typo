@@ -10,7 +10,7 @@ const selector = '.SansTypo.Writer';
 let framing = new Rule(selector, {
 	position: 'relative',
 	padding: '50px',
-	margin: '0 auto',
+	margin: 0,
 	textAlign: 'justify',
 	textAlignLast: 'center',
 	fontSize: '32px',
