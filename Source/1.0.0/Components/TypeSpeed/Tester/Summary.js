@@ -6,16 +6,20 @@ import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 
+//Styles
+import framing from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/framing';
+import theme from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/theme';
+
 //Utilities
 import exports from 'Parcello/exports';
 
 const identity = new Identity({
 	namespace: settings.namespace,
-	class: 'Stats',
+	class: 'Summary',
 	major: 1, minor: 0, patch: 0,
 });
 
-class Stats extends Div {
+class Summary extends Div {
 	constructor() {
 		super();
 		this.identity = identity;
@@ -25,13 +29,14 @@ class Stats extends Div {
 
 	}
 	construct_style() {
-
+		this.add(framing);
+		this.add(theme);
 	}
 	construct_relationships() {
 
 	}
 }
 
-export default Stats;
+export default Summary;
 
-exports(Stats).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Stats');
+exports(Summary).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary');
