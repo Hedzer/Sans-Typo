@@ -26,15 +26,10 @@ class Reader extends Div {
 	}
 	
 	construct_style() {
-		this.add([ framing ]);
+		this.add(framing);
 		this.add(theme);
 	}
-	construct_relationships() {
 
-	}
-	setWords(text) {
-
-	}
 }
 
 export default Reader;
