@@ -3,11 +3,13 @@
 import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
 import JFunction from 'JSUI/Source/1.0.0/Classes/Core/Function';
 import Page from 'JSUI/Source/1.0.0/Classes/Core/Page';
+import Img from 'JSUI/Source/1.0.0/Classes/Elements/Img';
 
 //Components
 import Reader from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Reader';
 import Summary from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary';
 import Writer from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer';
+import Cover from 'SansTypo/Source/1.0.0/Components/General/Cover';
 
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
@@ -24,9 +26,12 @@ import theme from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/theme';
 import reader from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/reader';
 import summary from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/summary';
 import writer from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/writer';
+import penalizer from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/penalizer';
 
 //Utilities
 import exports from 'Parcello/exports';
+
+const SEC = 1000;
 
 const identity = new Identity({
 	namespace: settings.namespace,
@@ -45,6 +50,8 @@ class Tester extends Page {
 		this.add(new Reader()).as('Reader');
 		this.add(new Summary()).as('Summary');
 		this.add(new Writer()).as('Writer');
+		this.add(new Cover()).as('Penalizer')
+			.text('Ah ah ah, no cheating');
 	}
 	//styles the elements built in the structural constructor
 	construct_style() {
@@ -54,6 +61,7 @@ class Tester extends Page {
 			reader,
 			summary,
 			writer,
+			penalizer,
 		]);
 	}
 	//assigns unique relationships to the structure
@@ -66,6 +74,14 @@ class Tester extends Page {
 		let summary = this.Summary;
 		let writer = this.Writer;
 		let summarize = new JFunction(() => { this.summarize(); }).throttle(5);
+		let penalizer = this.Penalizer;
+
+		// set up cheating penalizer
+		penalizer.nonInteractive = true;
+		penalizer.fadeOut();
+		penalizer.on('click', () => {
+			penalizer.fadeOut();
+		});
 
 		writer.on(['keypress', 'keyup'], () => {
 			if (game.hasEnded) { return; }
@@ -104,6 +120,15 @@ class Tester extends Page {
 
 		summary.on('newRoundRequested', () => {
 			this.newRound();
+		});
+
+		writer.on('cheating', () => {
+			let penalizer = this.Penalizer;
+			penalizer.fadeIn();
+			let event = penalizer.on('animationend', () => {
+				setTimeout(() => { penalizer.fadeOut() }, 5 * SEC);
+				event.remove();
+			});
 		});
 
 		this.newRound();

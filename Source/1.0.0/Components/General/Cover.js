@@ -41,19 +41,30 @@ class Cover extends Div {
 		this.fadeIn();
 
 		this.on('animationend', () => {
-			let action = (this.class(OUT).exists() ? 'add' : 'remove');
-			this.class(NONINTERACTIVE)[action]();
+			this.nonInteractive = this.class(OUT).exists();
 		});
 	}
 
 	fadeIn() {
-		this.class(NONINTERACTIVE).remove();
+		this.nonInteractive = false;
 		this.class(IN).add();
 		this.class(OUT).remove();
 	}
 	fadeOut() {
 		this.class(IN).remove();
 		this.class(OUT).add();
+	}
+	
+	get nonInteractive() {
+		return this.state('nonInteractive');
+	}
+	set nonInteractive(value) {
+		value = !!value;
+		let changed = this.state('nonInteractive', value);
+		if (!changed) { return; }
+
+		let action = (value ? 'add' : 'remove');
+		this.class(NONINTERACTIVE)[action]();
 	}
 }
 

@@ -31,7 +31,7 @@ const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
 
 const DELETE_KEYS = [ BACKSPACE, DEL ];
 const CURSOR_KEYS = [ LEFT, UP, RIGHT, DOWN ];
-const CHEAT_EVENTS = ['mousedown', 'mouseup', 'paste', 'drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
+const CHEAT_EVENTS = [ 'paste', 'drop' ];
 
 class Writer extends Div.implements(Enableable) {
 	constructor() {
@@ -143,6 +143,16 @@ class Writer extends Div.implements(Enableable) {
 		this.children(this.remove);
 		this.text('');
 		this.add(graded);
+	}
+
+	get enabled() {
+		return super.enabled;
+	}
+
+	set enabled(value) {
+		value = !!value;
+		super.enabled = value;
+		this.attribute('contentEditable', value);
 	}
 
 	get phrase() {
