@@ -1,5 +1,6 @@
 
 //Classes
+import Button from 'JSUI/Source/1.0.0/Classes/Elements/Button';
 import Div from 'JSUI/Source/1.0.0/Classes/Elements/Div';
 import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
 import JFunction from 'JSUI/Source/1.0.0/Classes/Core/Function';
@@ -9,9 +10,11 @@ import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 
 //Components
 import Stat from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Stat';
+import Cover from 'SansTypo/Source/1.0.0/Components/General/Cover';
 
 //Styles
 import framing from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/framing';
+import cover from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/cover';
 import theme from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/theme';
 
 //TypeChecks
@@ -37,6 +40,10 @@ const DEFAULTS = {
 		title: 'Words Per Minute',
 		info: '0.0',
 	},
+	KeysPressed: {
+		title: 'Keys Pressed',
+		info: '0',
+	},
 	Errors: {
 		title: 'Errors',
 		info: '0',
@@ -60,22 +67,49 @@ class Summary extends Div {
 		this.add(new Stat()).as('WordsPerMinute')
 			.set(DEFAULTS.WordsPerMinute);
 
+		this.add(new Stat()).as('KeysPressed')
+			.set(DEFAULTS.KeysPressed);
+
 		this.add(new Stat()).as('Errors')
 			.set(DEFAULTS.Errors);
 
 		this.add(new Stat()).as('ErrorRate')
 			.set(DEFAULTS.ErrorRate);
+
+		this.add(new Cover()).as('Instructions')
+			.text('Start typing sample text to begin test');
+
+		this.add(new Button()).as('NewRound')
+			.text('New Round');
 	}
 	construct_style() {
 		this.add(framing);
 		this.add(theme);
+		this.add(cover);
 	}
 	construct_relationships() {
 		let changes = [ 'elapsedSeconds', 'writtenWordCount', 'typedCount', 'errorCount', 'writtenCharCount', 'phrase' ]
 			.map( (s) => { return `${s}Changed`; });
 
+		// recalculate on any change, throttled
 		let calculate = new JFunction(() => { this.calculate(); }).throttle(5);
 		this.on(changes, () => { calculate.execute() });
+
+		// on typed count change, remove cover
+		this.on('typedCountChanged', () => {
+			this.Instructions.fadeOut();
+		});
+
+		// general cover changed event, this will also help set focus, as it only happens once the page is fully visible.
+		// since there is no "on dom inserted" and page load is async, this event can be used to simulate that.
+		this.Instructions.on('animationstart', () => {
+			this.trigger('coverStatusChanged');
+		});
+
+		// forward the click as the intent for a new round
+		this.NewRound.on('click', () => {
+			this.trigger('newRoundRequested');
+		});
 	}
 
 	calculate() {
@@ -89,6 +123,7 @@ class Summary extends Div {
 		let wordsPerMinute = (writtenWordCount && seconds ? writtenWordCount / seconds : 0) * MIN;
 		this.TimeInSeconds.info = seconds.toFixed(1);
 		this.WordsPerMinute.info = wordsPerMinute.toFixed(1);
+		this.KeysPressed.info = charsTyped;
 		this.Errors.info = errors;
 		this.ErrorRate.info = `${errorRate}%`;
 	}
@@ -157,6 +192,7 @@ class Summary extends Div {
 
 
 	reset() {
+		this.Instructions.fadeIn();
 		// reset the stats
 		Object.keys(DEFAULTS).forEach((key) => {
 			this[key].set(DEFAULTS[key]);
