@@ -16,9 +16,10 @@ const identity = new Identity({
 });
 
 class Letter extends Span {
-	constructor() {
+	constructor(char) {
 		super();
 		this.identity = identity;
+		this.text(char);
 	}
 
 	get isIncorrect() {

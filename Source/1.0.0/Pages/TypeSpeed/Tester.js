@@ -94,6 +94,7 @@ class Tester extends Page {
 
 		game.on('end', () => {
 			writer.enabled = false;
+			writer.grade();
 			summarize.execute();
 		});
 

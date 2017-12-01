@@ -6,6 +6,9 @@ import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
 
+//Components
+import Letter from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Letter';
+
 //Mixins
 import Enableable from 'JSUI/Source/1.0.0/Mixins/Enableable';
 
@@ -97,7 +100,9 @@ class Writer extends Div.implements(Enableable) {
 		selection.removeAllRanges();
 		selection.addRange(range);
 	}
+
 	reset() {
+		this.children(this.remove);
 		this.text('');
 		this.typedCount = 0;
 		this.errorCount = 0;
@@ -117,6 +122,22 @@ class Writer extends Div.implements(Enableable) {
 		let phrase = this.phrase;
 		if (text.length >= phrase.length) { return false; }
 		return phrase.charCodeAt(text.length);
+	}
+
+	grade() {
+		let text = this.text();
+		let phrase = this.phrase;
+		let length = text.length;
+		let graded = [];
+		for (var i = 0; i < length; i++) {
+			let char = text.charAt(i);
+			let letter = new Letter(char);
+			letter.isIncorrect = (char !== phrase.charAt(i));
+			graded.push(letter);
+		}
+		this.children(this.remove);
+		this.text('');
+		this.add(graded);
 	}
 
 	get phrase() {
