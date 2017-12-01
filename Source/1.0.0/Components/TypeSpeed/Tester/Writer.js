@@ -129,10 +129,15 @@ class Writer extends Div.implements(Enableable) {
 		let phrase = this.phrase;
 		let length = text.length;
 		let graded = [];
+		let lastLetter = {};
 		for (var i = 0; i < length; i++) {
 			let char = text.charAt(i);
 			let letter = new Letter(char);
-			letter.isIncorrect = (char !== phrase.charAt(i));
+			let isCorrect = (char === phrase.charAt(i));
+			lastLetter.isRightEnd = (isCorrect && lastLetter.isIncorrect);
+			letter.isIncorrect = !isCorrect;
+			letter.isRightEnd = (!isCorrect && i === length - 1);
+			lastLetter = letter;
 			graded.push(letter);
 		}
 		this.children(this.remove);
