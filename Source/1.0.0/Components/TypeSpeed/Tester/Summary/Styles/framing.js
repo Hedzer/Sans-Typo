@@ -7,6 +7,7 @@ import exports from 'Parcello/exports';
 
 let framing = new Rule('.SansTypo.Summary', {
 	position: 'relative',
+	boxSizing: 'border-box',
 	padding: '10px',
 	textAlign: 'justify',
 	textAlignLast: 'center',
