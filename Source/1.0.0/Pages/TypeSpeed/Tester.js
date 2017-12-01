@@ -83,7 +83,7 @@ class Tester extends Page {
 			penalizer.fadeOut();
 		});
 
-		writer.on(['keypress', 'keyup'], () => {
+		writer.on([ 'keypress', 'keyup', 'paste', 'drop' ], () => {
 			if (game.hasEnded) { return; }
 
 			if (!game.isInProgress) {

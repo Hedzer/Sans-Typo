@@ -1132,20 +1132,20 @@ var Stateful$2 = function Stateful(descendant) {
 			key: 'state',
 			value: function state(context, property, value) {
 				var state = context[symbol].state;
-				var old = state[property];
+				var current = state[property];
 				var isDefault = false;
 
-				var defaults$$1 = this[property];
+				var defaults$$1 = (context.constructor || this)[property];
 				if (!isUndefined$1(defaults$$1)) {
-					isDefault = old === defaults$$1;
-					old = defaults$$1;
+					isDefault = current === defaults$$1;
+					current = property in state ? current : defaults$$1;
 				}
 
 				if (arguments.length === 2) {
-					return old;
+					return current;
 				}
 
-				var hasChanged = old !== value;
+				var hasChanged = current !== value;
 
 				if (hasChanged) {
 					state[property] = value;
@@ -1153,7 +1153,7 @@ var Stateful$2 = function Stateful(descendant) {
 					var data = new StateChangeReceipt({
 						isDefault: isDefault,
 						new: value,
-						old: old,
+						old: current,
 						owner: context,
 						property: property
 					});
@@ -4349,17 +4349,149 @@ function _array$4(collection) {
 	var results = new Collection();
 
 	collection.forEach(function (item) {
+		results.push(_this.do(item));
+	});
+
+	return results;
+}
+
+exports$1(_array$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Do/_array');
+
+//Utilities
+function _function$1(method, args) {
+	method.call(this, args);
+	return this;
+}
+
+exports$1(_function$1).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Do/_function');
+
+//Utilities
+function _object$2(macro) {
+	var _this = this;
+
+	var results = {};
+
+	Object.keys(macro).forEach(function (command) {
+		results[command] = _this.do(command, macro[command]);
+	});
+
+	return results;
+}
+
+exports$1(_object$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Do/_object');
+
+//TypeChecks
+//Utilities
+function getter(obj, prop) {
+	if (!obj || !isObject(obj)) {
+		return;
+	}
+	return obj[prop];
+}
+
+exports$1(getter).as('JSUI/Source/1.0.0/Utilities/Paths/getter');
+
+//TypeChecks
+//Utilities
+function get$1(obj, path) {
+	if (isString(path)) {
+		return path.substring(1).split('.').reduce(getter, obj);
+	}
+	if (isArray(path)) {
+		return path.reduce(getter, obj);
+	}
+}
+
+exports$1(get$1).as('JSUI/Source/1.0.0/Utilities/Paths/get');
+
+//Utilities
+function getWithContext(obj, path) {
+	var parts = path.substring(1).split('.');
+	if (!parts.length) {
+		return;
+	}
+	if (parts.length === 1) {
+		return {
+			context: obj,
+			property: parts[0]
+		};
+	}
+	var tail = parts.splice(parts.length - 1, 1);
+	var reference = get$1(obj, parts);
+	if (reference) {
+		return {
+			context: reference,
+			property: tail[0]
+		};
+	}
+	return false;
+}
+
+exports$1(getWithContext).as('JSUI/Source/1.0.0/Utilities/Paths/getWithContext');
+
+//TypeChecks
+//Utilities
+function _path$2(command, args) {
+	var path = getWithContext(this, command);
+	if (!path || !path.context || !path.property) {
+		return;
+	}
+
+	var method = path.context[path.property];
+	if (isFunction$1(method)) {
+		if (isArray(args)) {
+			return method.apply(path.context, args);
+		}
+		return method.call(path.context, args);
+	}
+}
+
+exports$1(_path$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Do/_path');
+
+//TypeChecks
+//Utilities
+function _string$4(command, args) {
+	if (isFunction$1(this[command])) {
+		if (isArray(args)) {
+			return this[command].apply(this, args);
+		}
+		return this[command](args);
+	}
+}
+
+exports$1(_string$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Do/_string');
+
+//Handlers
+//Utilities
+var Do = {
+	array: _array$4,
+	function: _function$1,
+	object: _object$2,
+	path: _path$2,
+	string: _string$4
+};
+
+exports$1(Do).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Do');
+
+//Classes
+//Utilities
+function _array$5(collection) {
+	var _this = this;
+
+	var results = new Collection();
+
+	collection.forEach(function (item) {
 		results.push(_this.find(item));
 	});
 
 	return results;
 }
 
-exports$1(_array$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_array');
+exports$1(_array$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_array');
 
 //Classes
 //Utilities
-function _function$1(method) {
+function _function$2(method) {
 	var results = [];
 	var isJSUI = Element$1.isPrototypeOf(method.prototype);
 
@@ -4375,7 +4507,7 @@ function _function$1(method) {
 	return results;
 }
 
-exports$1(_function$1).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_function');
+exports$1(_function$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_function');
 
 //Utilities
 function _element$2(proto) {
@@ -4393,22 +4525,22 @@ function _element$2(proto) {
 exports$1(_element$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_element');
 
 //Utilities
-function _string$4(query) {
+function _string$5(query) {
 	var results = null;
 	results = this.element.querySelectorAll(query);
 	results = !results || results === null ? [] : results;
 	return results;
 }
 
-exports$1(_string$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_string');
+exports$1(_string$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_string');
 
 //Handlers
 //Utilities
-function _path$2(query) {
-	return _string$4.call(this, query);
+function _path$3(query) {
+	return _string$5.call(this, query);
 }
 
-exports$1(_path$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_path');
+exports$1(_path$3).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find/_path');
 
 //Utilities
 function _regex(expression) {
@@ -4441,20 +4573,68 @@ exports$1(_undefined$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find
 //Hanlders
 //Utilities
 var Find = {
-	array: _array$4,
-	function: _function$1,
+	array: _array$5,
+	function: _function$2,
 	element: _element$2,
-	path: _path$2,
+	path: _path$3,
 	regex: _regex,
-	string: _string$4,
+	string: _string$5,
 	undefined: _undefined$2
 };
 
 exports$1(Find).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Find');
 
 //Classes
+//TypeChecks
 //Utilities
-function _array$5(collection, method) {
+function _array$6(collection) {
+	var _this = this;
+
+	var results = new Collection();
+	collection.forEach(function (item) {
+
+		var result = _this.get(item);
+		results.push(result);
+
+		if (isString(item)) {
+			results[item] = result;
+		}
+	});
+	return results;
+}
+
+exports$1(_array$6).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Get/_array');
+
+//Utilities
+function _path$4(path) {
+	return get$1(this, path);
+}
+
+exports$1(_path$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Get/_path');
+
+//Utilities
+function _string$6(property) {
+	if (!property) {
+		return;
+	}
+	return this[property];
+}
+
+exports$1(_string$6).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Get/_string');
+
+//Handlers
+//Utilities
+var Get = {
+	array: _array$6,
+	path: _path$4,
+	string: _string$6
+};
+
+exports$1(Get).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Get');
+
+//Classes
+//Utilities
+function _array$7(collection, method) {
 	var _this = this;
 
 	var results = new Collection();
@@ -4466,10 +4646,10 @@ function _array$5(collection, method) {
 	return results;
 }
 
-exports$1(_array$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_array');
+exports$1(_array$7).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_array');
 
 //Utilities
-function _object$2(assignments) {
+function _object$3(assignments) {
 	var _this = this;
 
 	var results = {};
@@ -4482,37 +4662,37 @@ function _object$2(assignments) {
 	return results;
 }
 
-exports$1(_object$2).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_object');
+exports$1(_object$3).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_object');
 
 //Utilities
-function _string$5(name, method) {
+function _string$7(name, method) {
 	return on$1.call(this, name, method);
 }
 
-exports$1(_string$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_string');
+exports$1(_string$7).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_string');
 
 //Handlers
 //Utilities
-function _path$3(name, method) {
-	return _string$5.call(this, name, method);
+function _path$5(name, method) {
+	return _string$7.call(this, name, method);
 }
 
-exports$1(_path$3).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_path');
+exports$1(_path$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On/_path');
 
 //Handlers
 //Utilities
 var On = {
-	array: _array$5,
-	object: _object$2,
-	path: _path$3,
-	string: _string$5
+	array: _array$7,
+	object: _object$3,
+	path: _path$5,
+	string: _string$7
 };
 
 exports$1(On).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/On');
 
 //Classes
 //Utilities
-function _array$6(collection) {
+function _array$8(collection) {
 	var _this = this;
 
 	var results = new Collection();
@@ -4524,7 +4704,7 @@ function _array$6(collection) {
 	return results;
 }
 
-exports$1(_array$6).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Remove/_array');
+exports$1(_array$8).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Remove/_array');
 
 //Utilities
 function _element$3(instance) {
@@ -4546,7 +4726,7 @@ exports$1(_undefined$3).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Remo
 //Handlers
 //Utilities
 var Remove = {
-	array: _array$6,
+	array: _array$8,
 	element: _element$3,
 	undefined: _undefined$3
 };
@@ -4554,15 +4734,102 @@ var Remove = {
 exports$1(Remove).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Remove');
 
 //Utilities
-function _path$4(text) {
+function _array$9(properties, value) {
+	var _this = this;
+
+	var results = {};
+
+	properties.forEach(function (command) {
+		results[command] = _this.set(command, value);
+	});
+
+	return results;
+}
+
+exports$1(_array$9).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Set/_array');
+
+//Utilities
+function _object$4(assignments) {
+	var _this = this;
+
+	var results = {};
+
+	Object.keys(assignments).forEach(function (command) {
+		results[command] = _this.set(command, assignments[command]);
+	});
+
+	return results;
+}
+
+exports$1(_object$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Set/_object');
+
+//Utilities
+function setter(obj, path, value) {
+	var parts = path.substring(1).split('.');
+	if (!parts.length) {
+		return;
+	}
+	if (parts.length === 1) {
+		obj[parts[0]] = value;
+		return true;
+	}
+	var tail = parts.splice(parts.length - 1, 1);
+	var reference = get$1(obj, parts);
+	if (reference) {
+		reference[tail[0]] = value;
+		return true;
+	}
+	return false;
+}
+
+exports$1(setter).as('JSUI/Source/1.0.0/Utilities/Paths/setter');
+
+//Utilities
+function set$1(obj, path, value) {
+	return setter(obj, path, value);
+}
+
+exports$1(set$1).as('JSUI/Source/1.0.0/Utilities/Paths/set');
+
+//Utilities
+function _path$6(path, value) {
+	return set$1(this, path, value);
+}
+
+exports$1(_path$6).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Set/_path');
+
+//Utilities
+function _string$8(property, value) {
+	if (!property) {
+		return;
+	}
+	this[property] = value;
+	return value;
+}
+
+exports$1(_string$8).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Set/_string');
+
+//Handlers
+//Utilities
+var Set = {
+	array: _array$9,
+	object: _object$4,
+	path: _path$6,
+	string: _string$8
+};
+
+exports$1(Set).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Set');
+
+//Utilities
+function _path$7(text) {
 	return _string.call(this, text);
 }
 
-exports$1(_path$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Text/_path');
+exports$1(_path$7).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Text/_path');
 
 //Constants
 //Utilities
-function _string$6(text) {
+function _string$9(text) {
 	if (this[symbol] && this.element) {
 		if (!this[symbol].text) {
 			var textNode = document.createTextNode(text);
@@ -4576,7 +4843,7 @@ function _string$6(text) {
 	return false;
 }
 
-exports$1(_string$6).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Text/_string');
+exports$1(_string$9).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Text/_string');
 
 //Constants
 //Utilities
@@ -4591,8 +4858,10 @@ exports$1(_undefined$4).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Text
 //Handlers
 //Utilities
 var Text = {
-	path: _path$4,
-	string: _string$6,
+	path: _path$7,
+	string: _string$9,
+	number: _string$9,
+	boolean: _string$9,
 	undefined: _undefined$4
 };
 
@@ -4600,7 +4869,7 @@ exports$1(Text).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Text');
 
 //Classes
 //Utilities
-function _array$7(collection, args) {
+function _array$10(collection, args) {
 	var _this = this;
 
 	var results = new Collection();
@@ -4612,10 +4881,10 @@ function _array$7(collection, args) {
 	return results;
 }
 
-exports$1(_array$7).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_array');
+exports$1(_array$10).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_array');
 
 //Utilities
-function _object$3(assignments) {
+function _object$5(assignments) {
 	var _this = this;
 
 	Object.keys(assignments).forEach(function (name) {
@@ -4624,10 +4893,10 @@ function _object$3(assignments) {
 	});
 }
 
-exports$1(_object$3).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_object');
+exports$1(_object$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_object');
 
 //Utilities
-function _string$7(name, args) {
+function _string$10(name, args) {
 	if (!this.element) {
 		return false;
 	}
@@ -4636,22 +4905,22 @@ function _string$7(name, args) {
 	return true;
 }
 
-exports$1(_string$7).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_string');
+exports$1(_string$10).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_string');
 
 //Handlers
 //Utilities
-function _path$5(name, args) {
-	return _string$7.call(this, name, args);
+function _path$8(name, args) {
+	return _string$10.call(this, name, args);
 }
 
-exports$1(_path$5).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_path');
+exports$1(_path$8).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger/_path');
 
 //Utilities
 var Trigger = {
-	array: _array$7,
-	object: _object$3,
-	path: _path$5,
-	string: _string$7
+	array: _array$10,
+	object: _object$5,
+	path: _path$8,
+	string: _string$10
 };
 
 exports$1(Trigger).as('JSUI/Source/1.0.0/Classes/Core/Element/Handlers/Trigger');
@@ -4782,8 +5051,9 @@ var Element$1 = function (_Styleable) {
 						});
 					}
 				}
-				if (_parent.children) {
-					delete _parent.children[this.uid];
+				var _$parent = _parent[symbol];
+				if (_$parent && _$parent.children) {
+					delete _$parent.children[this.uid];
 				}
 			}
 			var _children = _private.children;
@@ -4808,11 +5078,25 @@ var Element$1 = function (_Styleable) {
 			return get(Element.prototype.__proto__ || Object.getPrototypeOf(Element.prototype), 'destructor', this).call(this);
 		}
 	}, {
+		key: 'do',
+		value: function _do(method, args) {
+			var type = handler$1(method);
+			var action = Do[type];
+			return (action || unhandled).call(this, method, args);
+		}
+	}, {
 		key: 'find',
 		value: function find(what) {
 			var type = handler$1(what);
 			var action = Find[type];
 			return (action || unhandled([])).call(this, what);
+		}
+	}, {
+		key: 'get',
+		value: function get$$1(property) {
+			var type = handler$1(property);
+			var action = Get[type];
+			return (action || unhandled).call(this, property);
 		}
 	}, {
 		key: 'on',
@@ -4825,6 +5109,13 @@ var Element$1 = function (_Styleable) {
 			var type = handler$1(item);
 			var action = Remove[type];
 			return (action || unhandled).call(this, item);
+		}
+	}, {
+		key: 'set',
+		value: function set$$1(property, value) {
+			var type = handler$1(property);
+			var action = Set[type];
+			return (action || unhandled).call(this, property, value);
 		}
 	}, {
 		key: 'text',
@@ -5645,7 +5936,6 @@ var Application = function (_Distinct$implements) {
 			return this.state('Page');
 		},
 		set: function set$$1(page) {
-			console.log(isPage(page), page);
 			if (!isPage(page)) {
 				return;
 			}
@@ -5655,7 +5945,6 @@ var Application = function (_Distinct$implements) {
 				if (isPage(previous)) {
 					previous.remove();
 				}
-				console.log('got to add to root');
 				page.addTo(this.Root);
 			}
 		}
@@ -5663,7 +5952,6 @@ var Application = function (_Distinct$implements) {
 		key: 'Root',
 		get: function get$$1() {
 			var root = this.state('Root') || Application.Root;
-			console.log(root);
 			return root;
 		},
 		set: function set$$1(HTMLElement) {
@@ -5742,6 +6030,54 @@ var Application = function (_Distinct$implements) {
 
 exports$1(Application).as('JSUI/Source/1.0.0/Classes/Core/Application');
 
+//Classes
+//Utilities
+var identity$17 = new Identity({
+	class: 'Img',
+	major: 1, minor: 0, patch: 0
+});
+
+var Img = function (_Element) {
+	inherits(Img, _Element);
+
+	function Img() {
+		classCallCheck(this, Img);
+
+		var _this = possibleConstructorReturn(this, (Img.__proto__ || Object.getPrototypeOf(Img)).call(this, 'img'));
+
+		_this.identity = identity$17;
+		return _this;
+	}
+
+	return Img;
+}(Element$1);
+
+exports$1(Img).as('JSUI/Source/1.0.0/Classes/Elements/Img');
+
+//Classes
+//Utilities
+var identity$19 = new Identity({
+	class: 'Div',
+	major: 1, minor: 0, patch: 0
+});
+
+var Div = function (_Element) {
+	inherits(Div, _Element);
+
+	function Div() {
+		classCallCheck(this, Div);
+
+		var _this = possibleConstructorReturn(this, (Div.__proto__ || Object.getPrototypeOf(Div)).call(this, 'div'));
+
+		_this.identity = identity$19;
+		return _this;
+	}
+
+	return Div;
+}(Element$1);
+
+exports$1(Div).as('JSUI/Source/1.0.0/Classes/Elements/Div');
+
 const ENV = {
 				dev: true,
 				prod: false,
@@ -5760,8 +6096,1293 @@ var settings$2 = {
 exports$1(settings$2).as('SansTypo/Source/1.0.0/Constants/settings');
 
 //Classes
-//Constants
 //Utilities
+var framing = new StyleSheetRule('.SansTypo.Reader', {
+	position: 'relative',
+	padding: '50px',
+	margin: 0,
+	textAlign: 'justify',
+	textAlignLast: 'center',
+	fontSize: '4vmin',
+	zIndex: 1
+});
+
+exports$1(framing).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Reader/Styles/framing');
+
+//Classes
+//Utilities
+var theme = new StyleSheetRule('.SansTypo.Reader', {
+	backgroundColor: 'white',
+	fontFamily: '"Inconsolata", monospace',
+	boxShadow: '0 0 5px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 0, 0, 0.1)',
+	color: '#646464',
+	userSelect: 'none'
+});
+
+exports$1(theme).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Reader/Styles/theme');
+
+//Classes
+//Constants
+//Styles
+//Utilities
+var identity$18 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'Reader',
+	major: 1, minor: 0, patch: 0
+});
+
+var Reader = function (_Div) {
+	inherits(Reader, _Div);
+
+	function Reader() {
+		classCallCheck(this, Reader);
+
+		var _this = possibleConstructorReturn(this, (Reader.__proto__ || Object.getPrototypeOf(Reader)).call(this));
+
+		_this.identity = identity$18;
+		return _this;
+	}
+
+	createClass(Reader, [{
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(framing);
+			this.add(theme);
+		}
+	}, {
+		key: 'phrase',
+		get: function get$$1() {
+			return this.text();
+		},
+		set: function set$$1(value) {
+			this.text(value);
+			this.trigger('phraseChanged', value);
+		}
+	}]);
+	return Reader;
+}(Div);
+
+exports$1(Reader).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Reader');
+
+//Classes
+//Utilities
+var identity$21 = new Identity({
+	class: 'Button',
+	major: 1, minor: 0, patch: 0
+});
+
+var Button = function (_Element) {
+	inherits(Button, _Element);
+
+	function Button() {
+		classCallCheck(this, Button);
+
+		var _this = possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, 'button'));
+
+		_this.identity = identity$21;
+		return _this;
+	}
+
+	return Button;
+}(Element$1);
+
+exports$1(Button).as('JSUI/Source/1.0.0/Classes/Elements/Button');
+
+//Classes
+//Utilities
+var selector = '.SansTypo.Stat';
+
+var framing$2 = new StyleSheetRule(selector, {
+	display: 'inline-block',
+	boxSizing: 'border-box',
+	width: '100%',
+	margin: '10px 0',
+	overflow: 'hidden'
+});
+
+var title = new StyleSheetRule(selector + ' .as-Title', {
+	display: 'inline-block',
+	padding: '5px',
+	width: '100%',
+	fontSize: '2vh'
+});
+
+var info = new StyleSheetRule(selector + ' .as-Info', {
+	display: 'inline-block',
+	padding: '5px',
+	width: '100%',
+	fontSize: '3vh'
+});
+
+var exported$2 = [framing$2, title, info];
+
+exports$1(exported$2).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Stat/Styles/framing');
+
+//Classes
+//Utilities
+var selector$1 = '.SansTypo.Stat';
+
+var theme$2 = new StyleSheetRule(selector$1, {
+	backgroundColor: 'white',
+	color: '#646464',
+	border: 'solid 1px #dcdcdc',
+	borderRadius: '4px',
+	userSelect: 'none'
+});
+
+var info$1 = new StyleSheetRule(selector$1 + ' .as-Title', {
+	borderBottom: 'solid 1px #cccccc'
+});
+
+var theme$3 = [theme$2, info$1];
+
+exports$1(theme$2).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/theme');
+
+//Classes
+//Constants
+//Styles
+//Utilities
+var identity$22 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'Stat',
+	major: 1, minor: 0, patch: 0
+});
+
+var Stat = function (_Div) {
+	inherits(Stat, _Div);
+
+	function Stat() {
+		classCallCheck(this, Stat);
+
+		var _this = possibleConstructorReturn(this, (Stat.__proto__ || Object.getPrototypeOf(Stat)).call(this));
+
+		_this.identity = identity$22;
+		return _this;
+	}
+
+	createClass(Stat, [{
+		key: 'construct_structure',
+		value: function construct_structure() {
+			this.add(new Div()).as('Title');
+			this.add(new Div()).as('Info');
+		}
+	}, {
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(exported$2);
+			this.add(theme$3);
+		}
+	}, {
+		key: 'title',
+		get: function get$$1() {
+			return this.state('title');
+		},
+		set: function set$$1(value) {
+			this.state('title', value);
+			this.Title.text(value);
+		}
+	}, {
+		key: 'info',
+		get: function get$$1() {
+			return this.state('info');
+		},
+		set: function set$$1(value) {
+			this.state('info', value);
+			this.Info.text(value);
+		}
+	}]);
+	return Stat;
+}(Div);
+
+exports$1(Stat).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Stat');
+
+//Classes
+//Utilities
+var selector$2 = '.SansTypo.Cover';
+
+var framing$4 = new StyleSheetRule(selector$2, {
+	position: 'absolute',
+	top: 0,
+	right: 0,
+	bottom: 0,
+	left: 0,
+	padding: '5%',
+	margin: 0,
+	textAlign: 'center',
+	textAlignLast: 'center',
+	fontSize: '3vh',
+	zIndex: 1000
+});
+
+var nonInteractive = new StyleSheetRule(selector$2 + '.non-interactive', {
+	display: 'none',
+	pointerEvents: 'none'
+});
+
+var exported$3 = [framing$4, nonInteractive];
+
+exports$1(exported$3).as('SansTypo/Source/1.0.0/Components/General/Cover/Styles/framing');
+
+//Classes
+//Utilities
+var selector$3 = '.SansTypo.Cover';
+
+var theme$4 = new StyleSheetRule(selector$3, {
+	backgroundColor: 'white',
+	color: '#646464',
+	opacity: 0,
+	userSelect: 'none'
+});
+
+exports$1(theme$4).as('SansTypo/Source/1.0.0/Components/General/Cover/Styles/theme');
+
+//Classes
+//Constants
+//Styles
+//Utilities
+var identity$23 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'Cover',
+	major: 1, minor: 0, patch: 0
+});
+
+var IN = 'fadeIn';
+var OUT = 'fadeOut';
+var NONINTERACTIVE = 'non-interactive';
+var Cover = function (_Div) {
+	inherits(Cover, _Div);
+
+	function Cover() {
+		classCallCheck(this, Cover);
+
+		var _this = possibleConstructorReturn(this, (Cover.__proto__ || Object.getPrototypeOf(Cover)).call(this));
+
+		_this.identity = identity$23;
+		return _this;
+	}
+
+	createClass(Cover, [{
+		key: 'construct_structure',
+		value: function construct_structure() {
+			this.class('animated').add();
+		}
+	}, {
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(exported$3);
+			this.add(theme$4);
+		}
+	}, {
+		key: 'construct_relationships',
+		value: function construct_relationships() {
+			var _this2 = this;
+
+			this.fadeIn();
+
+			this.on('animationend', function () {
+				_this2.nonInteractive = _this2.class(OUT).exists();
+			});
+		}
+	}, {
+		key: 'fadeIn',
+		value: function fadeIn() {
+			this.nonInteractive = false;
+			this.class(IN).add();
+			this.class(OUT).remove();
+		}
+	}, {
+		key: 'fadeOut',
+		value: function fadeOut() {
+			this.class(IN).remove();
+			this.class(OUT).add();
+		}
+	}, {
+		key: 'nonInteractive',
+		get: function get$$1() {
+			return this.state('nonInteractive');
+		},
+		set: function set$$1(value) {
+			value = !!value;
+			var changed = this.state('nonInteractive', value);
+			if (!changed) {
+				return;
+			}
+
+			var action = value ? 'add' : 'remove';
+			this.class(NONINTERACTIVE)[action]();
+		}
+	}]);
+	return Cover;
+}(Div);
+
+exports$1(Cover).as('SansTypo/Source/1.0.0/Components/General/Cover');
+
+//Classes
+//Utilities
+var selector$4 = '.SansTypo.Summary';
+
+var framing$6 = new StyleSheetRule(selector$4, {
+	position: 'relative',
+	boxSizing: 'border-box',
+	padding: '10px',
+	textAlign: 'justify',
+	textAlignLast: 'center',
+	fontSize: '20px',
+	overflow: 'hidden'
+});
+
+var newRound = new StyleSheetRule(selector$4 + ' .Button.as-NewRound', {
+	display: 'inline-block',
+	width: '100%',
+	padding: '5px',
+	fontSize: '2vh',
+	margin: '10px 0px'
+});
+
+var exported$4 = [framing$6, newRound];
+
+exports$1(exported$4).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/framing');
+
+//Classes
+//Utilities
+var cover = new StyleSheetRule('.SansTypo.Summary .Cover.as-Instructions', {
+	paddingTop: '18vh'
+});
+
+exports$1(cover).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/cover');
+
+//Classes
+//Utilities
+var selector$5 = '.SansTypo.Summary';
+
+var theme$6 = new StyleSheetRule(selector$5, {
+	backgroundColor: 'white',
+	boxShadow: '0 0 5px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 0, 0, 0.1)',
+	zIndex: 2
+});
+
+var seconds = new StyleSheetRule(selector$5 + ' .Stat.as-TimeInSeconds .as-Title', {
+	backgroundColor: '#f5f8fa'
+});
+
+var wpm = new StyleSheetRule(selector$5 + ' .Stat.as-WordsPerMinute .as-Title', {
+	backgroundColor: '#f6faf5'
+});
+
+var keysPressed = new StyleSheetRule(selector$5 + ' .Stat.as-KeysPressed .as-Title', {
+	backgroundColor: '#f5f5fa'
+});
+
+var errors = new StyleSheetRule(selector$5 + ' .Stat.as-Errors .as-Title', {
+	backgroundColor: '#faf5f6'
+});
+
+var errorRate = new StyleSheetRule(selector$5 + ' .Stat.as-ErrorRate .as-Title', {
+	backgroundColor: '#faf9f5'
+});
+
+var newRound$1 = new StyleSheetRule(selector$5 + ' .Button.as-NewRound', {
+	backgroundColor: '#e8fbd5',
+	borderRadius: '4px',
+	color: '#646464',
+	cursor: 'pointer',
+	borderStyle: 'solid',
+	outline: 'none'
+});
+
+var newRoundActive = new StyleSheetRule(selector$5 + ' .Button.as-NewRound:active', {
+	backgroundColor: '#dbf9be'
+});
+
+var exported$5 = [theme$6, seconds, wpm, keysPressed, errors, errorRate, newRound$1, newRoundActive];
+
+exports$1(exported$5).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/theme');
+
+//Classes
+//Constants
+//Components
+//Styles
+//TypeChecks
+//Utilities
+var identity$20 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'Summary',
+	major: 1, minor: 0, patch: 0
+});
+
+var MIN = 60;
+
+var DEFAULTS = {
+	TimeInSeconds: {
+		title: 'Seconds',
+		info: '0.0'
+	},
+	WordsPerMinute: {
+		title: 'Words Per Minute',
+		info: '0.0'
+	},
+	KeysPressed: {
+		title: 'Keys Pressed',
+		info: '0'
+	},
+	Errors: {
+		title: 'Errors',
+		info: '0'
+	},
+	ErrorRate: {
+		title: 'Error Rate',
+		info: '0.0%'
+	}
+};
+
+var Summary = function (_Div) {
+	inherits(Summary, _Div);
+
+	function Summary() {
+		classCallCheck(this, Summary);
+
+		var _this = possibleConstructorReturn(this, (Summary.__proto__ || Object.getPrototypeOf(Summary)).call(this));
+
+		_this.identity = identity$20;
+		return _this;
+	}
+
+	createClass(Summary, [{
+		key: 'construct_structure',
+		value: function construct_structure() {
+			this.add(new Stat()).as('TimeInSeconds').set(DEFAULTS.TimeInSeconds);
+
+			this.add(new Stat()).as('WordsPerMinute').set(DEFAULTS.WordsPerMinute);
+
+			this.add(new Stat()).as('KeysPressed').set(DEFAULTS.KeysPressed);
+
+			this.add(new Stat()).as('Errors').set(DEFAULTS.Errors);
+
+			this.add(new Stat()).as('ErrorRate').set(DEFAULTS.ErrorRate);
+
+			this.add(new Cover()).as('Instructions').text('Start typing sample text to begin test');
+
+			this.add(new Button()).as('NewRound').text('New Round');
+		}
+	}, {
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(exported$4);
+			this.add(exported$5);
+			this.add(cover);
+		}
+	}, {
+		key: 'construct_relationships',
+		value: function construct_relationships() {
+			var _this2 = this;
+
+			var changes = ['elapsedSeconds', 'writtenWordCount', 'typedCount', 'errorCount', 'writtenCharCount', 'phrase'].map(function (s) {
+				return s + 'Changed';
+			});
+
+			// recalculate on any change, throttled
+			var calculate = new JSUIFunction$1(function () {
+				_this2.calculate();
+			}).throttle(5);
+			this.on(changes, function () {
+				calculate.execute();
+			});
+
+			// on typed count change, remove cover
+			this.on('typedCountChanged', function () {
+				_this2.Instructions.fadeOut();
+			});
+
+			// general cover changed event, this will also help set focus, as it only happens once the page is fully visible.
+			// since there is no "on dom inserted" and page load is async, this event can be used to simulate that.
+			this.Instructions.on('animationstart', function () {
+				_this2.trigger('coverStatusChanged');
+			});
+
+			// forward the click as the intent for a new round
+			this.NewRound.on('click', function () {
+				_this2.trigger('newRoundRequested');
+			});
+		}
+	}, {
+		key: 'calculate',
+		value: function calculate() {
+			var writtenWordCount = this.writtenWordCount;
+			var seconds = this.elapsedSeconds || 0;
+			var errors = this.errorCount || 0;
+			var charsTyped = this.typedCount || 0;
+			var errorRate = charsTyped && errors ? (errors / charsTyped * 100).toFixed(2) : '0.00';
+
+			var wordsPerMinute = (writtenWordCount && seconds ? writtenWordCount / seconds : 0) * MIN;
+			this.TimeInSeconds.info = seconds.toFixed(1);
+			this.WordsPerMinute.info = wordsPerMinute.toFixed(1);
+			this.KeysPressed.info = charsTyped;
+			this.Errors.info = errors;
+			this.ErrorRate.info = errorRate + '%';
+		}
+	}, {
+		key: 'reset',
+		value: function reset() {
+			var _this3 = this;
+
+			this.Instructions.fadeIn();
+			// reset the stats
+			Object.keys(DEFAULTS).forEach(function (key) {
+				_this3[key].set(DEFAULTS[key]);
+			});
+		}
+	}, {
+		key: 'phrase',
+		get: function get$$1() {
+			return this.state('phrase');
+		},
+		set: function set$$1(value) {
+			if (!isString(value)) {
+				return;
+			}
+
+			var changed = this.state('phrase', value);
+			if (!changed) {
+				return;
+			}
+
+			this.totalCharCount = value.length;
+			this.totalWordCount = value.split('\s').length;
+		}
+	}, {
+		key: 'elapsedSeconds',
+		get: function get$$1() {
+			return this.state('elapsedSeconds');
+		},
+		set: function set$$1(value) {
+			this.state('elapsedSeconds', value);
+		}
+	}, {
+		key: 'writtenWordCount',
+		get: function get$$1() {
+			return this.state('writtenWordCount');
+		},
+		set: function set$$1(value) {
+			this.state('writtenWordCount', value);
+		}
+	}, {
+		key: 'totalWordCount',
+		get: function get$$1() {
+			return this.state('totalWordCount');
+		},
+		set: function set$$1(value) {
+			this.state('totalWordCount', value);
+		}
+	}, {
+		key: 'writtenCharCount',
+		get: function get$$1() {
+			return this.state('writtenCharCount');
+		},
+		set: function set$$1(value) {
+			this.state('writtenCharCount', value);
+		}
+	}, {
+		key: 'totalCharCount',
+		get: function get$$1() {
+			return this.state('totalCharCount');
+		},
+		set: function set$$1(value) {
+			this.state('totalCharCount', value);
+		}
+	}, {
+		key: 'typedCount',
+		get: function get$$1() {
+			return this.state('typedCount');
+		},
+		set: function set$$1(value) {
+			this.state('typedCount', value);
+		}
+	}, {
+		key: 'errorCount',
+		get: function get$$1() {
+			return this.state('errorCount');
+		},
+		set: function set$$1(value) {
+			this.state('errorCount', value);
+		}
+	}]);
+	return Summary;
+}(Div);
+
+exports$1(Summary).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary');
+
+//Classes
+//Utilities
+var identity$26 = new Identity({
+	class: 'Span',
+	major: 1, minor: 0, patch: 0
+});
+
+var Span = function (_Element) {
+	inherits(Span, _Element);
+
+	function Span() {
+		classCallCheck(this, Span);
+
+		var _this = possibleConstructorReturn(this, (Span.__proto__ || Object.getPrototypeOf(Span)).call(this, 'span'));
+
+		_this.identity = identity$26;
+		return _this;
+	}
+
+	return Span;
+}(Element$1);
+
+exports$1(Span).as('JSUI/Source/1.0.0/Classes/Elements/Span');
+
+//Classes
+//Utilities
+var framing$8 = new StyleSheetRule('.SansTypo.Letter', {
+	color: 'inherit',
+	fontSize: 'inherit',
+	fontFamily: 'inherit'
+});
+
+exports$1(framing$8).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Letter/Styles/theme');
+
+//Classes
+//Utilities
+var selector$6 = '.SansTypo.Letter';
+var incorrect = selector$6 + '.is-incorrect';
+
+var theme$8 = new StyleSheetRule(incorrect, {
+	backgroundColor: '#ffcccc',
+	borderRadius: '0px'
+});
+
+var leftHighlight = new StyleSheetRule(selector$6 + ':not(.is-incorrect) + ' + incorrect, {
+	borderBottomLeftRadius: '2px',
+	borderTopLeftRadius: '2px'
+});
+
+var rightHighlight = new StyleSheetRule(incorrect + '.is-right-end', {
+	borderBottomRightRadius: '2px',
+	borderTopRightRadius: '2px'
+});
+
+var exported$6 = [theme$8, leftHighlight, rightHighlight];
+
+exports$1(exported$6).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Letter/Styles/theme');
+
+//Classes
+//Constants
+//Styles
+//Utilities
+var identity$25 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'Letter',
+	major: 1, minor: 0, patch: 0
+});
+
+var Letter = function (_Span) {
+	inherits(Letter, _Span);
+
+	function Letter(char) {
+		classCallCheck(this, Letter);
+
+		var _this = possibleConstructorReturn(this, (Letter.__proto__ || Object.getPrototypeOf(Letter)).call(this));
+
+		_this.identity = identity$25;
+		_this.text(char);
+		return _this;
+	}
+
+	createClass(Letter, [{
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(framing$8);
+			this.add(exported$6);
+		}
+	}, {
+		key: 'isIncorrect',
+		get: function get$$1() {
+			return this.state('isIncorrect');
+		},
+		set: function set$$1(value) {
+			value = !!value;
+			var hasChanged = this.state('isIncorrect', value);
+			if (hasChanged) {
+				var action = value ? 'add' : 'remove';
+				this.class('is-incorrect')[action]();
+			}
+		}
+	}, {
+		key: 'isRightEnd',
+		get: function get$$1() {
+			return this.state('isRightEndling');
+		},
+		set: function set$$1(value) {
+			value = !!value;
+			var hasChanged = this.state('isRightEnd', value);
+			if (hasChanged) {
+				var action = value ? 'add' : 'remove';
+				this.class('is-right-end')[action]();
+			}
+		}
+	}]);
+	return Letter;
+}(Span);
+
+exports$1(Letter).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Letter');
+
+//Classes
+//Utilities
+var selector$7 = '.SansTypo.Writer';
+
+var framing$10 = new StyleSheetRule(selector$7, {
+	position: 'relative',
+	padding: '50px',
+	margin: 0,
+	textAlign: 'justify',
+	textAlignLast: 'center',
+	fontSize: '4vmin',
+	zIndex: 0
+});
+
+var empty = new StyleSheetRule(selector$7 + ':empty', {
+	paddingLeft: "calc(50% - 100px)"
+});
+
+var exported$7 = [framing$10, empty];
+
+exports$1(exported$7).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/framing');
+
+//Classes
+//Utilities
+var selector$8 = '.SansTypo.Writer';
+
+var theme$10 = new StyleSheetRule(selector$8, {
+	backgroundColor: 'white',
+	fontFamily: '"Inconsolata", monospace',
+	color: '#646464'
+});
+
+var noFocus = new StyleSheetRule(selector$8 + ':focus', {
+	outline: 'none'
+});
+
+var exported$8 = [theme$10, noFocus];
+
+exports$1(exported$8).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/theme');
+
+//Classes
+//Constants
+//Components
+//Mixins
+//Styles
+//Utilities
+var identity$24 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'Writer',
+	major: 1, minor: 0, patch: 0
+});
+
+var BACKSPACE = 8;
+var DEL = 46;
+var LEFT = 37;
+var UP = 38;
+var RIGHT = 39;
+var DOWN = 40;
+
+var DELETE_KEYS = [BACKSPACE, DEL];
+var CURSOR_KEYS = [LEFT, UP, RIGHT, DOWN];
+var CHEAT_EVENTS = ['paste', 'drop'];
+
+var Writer = function (_Div$implements) {
+	inherits(Writer, _Div$implements);
+
+	function Writer() {
+		classCallCheck(this, Writer);
+
+		var _this = possibleConstructorReturn(this, (Writer.__proto__ || Object.getPrototypeOf(Writer)).call(this));
+
+		_this.identity = identity$24;
+		return _this;
+	}
+
+	createClass(Writer, [{
+		key: 'construct_structure',
+		value: function construct_structure() {
+			this.attribute('contentEditable', true);
+		}
+	}, {
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(exported$7);
+			this.add(exported$8);
+		}
+	}, {
+		key: 'construct_relationships',
+		value: function construct_relationships() {
+			var _this2 = this;
+
+			this.on('keypress', function (e) {
+				if (!_this2.enabled) {
+					return e.preventDefault();
+				}
+
+				// check typed vs errors
+				var code = e.which || e.keyCode || e.charCode;
+				var expected = _this2.getExpectedNext();
+				_this2.typedCount++;
+				if (expected !== code) {
+					_this2.errorCount++;
+				}
+			});
+
+			//allowDeletions & cursorMovement
+			this.on('keydown', function (e) {
+				if (!_this2.enabled) {
+					return e.preventDefault();
+				}
+
+				//check for deletions & caret moves
+				var code = e.which || e.keyCode || e.charCode;
+				var deletionsAllowed = _this2.allowDeletions || !DELETE_KEYS.includes(code);
+				var cursorMovingAllowed = _this2.allowCursorSet || !CURSOR_KEYS.includes(code);
+				if (deletionsAllowed && cursorMovingAllowed) {
+					return;
+				}
+
+				e.preventDefault();
+			});
+
+			//allow clicking for cursor position
+			this.on(CHEAT_EVENTS, function (e) {
+				_this2.trigger('cheating', e);
+				if (_this2.allowCheating) {
+					return;
+				}
+
+				e.preventDefault();
+			});
+
+			this.on('mouseover', function (e) {
+				if (!_this2.enabled) {
+					return;
+				}
+
+				_this2.element.focus();
+				var position = _this2.text().length;
+				_this2.setCursor(position);
+			});
+		}
+	}, {
+		key: 'setCursor',
+		value: function setCursor(index) {
+			var range = document.createRange();
+			var selection = window.getSelection();
+			var textNode = this.element.firstChild;
+			if (!textNode) {
+				return;
+			}
+
+			range.setStart(textNode, index);
+			range.setEnd(textNode, index);
+			range.collapse(true);
+			selection.removeAllRanges();
+			selection.addRange(range);
+		}
+	}, {
+		key: 'reset',
+		value: function reset() {
+			this.children(this.remove);
+			this.text('');
+			this.typedCount = 0;
+			this.errorCount = 0;
+			this.enabled = true;
+		}
+		//override, contentEditable messes with things
+
+	}, {
+		key: 'text',
+		value: function text(_text) {
+			if (!arguments.length) {
+				return this.element.textContent;
+			}
+
+			this.element.textContent = _text;
+		}
+	}, {
+		key: 'getExpectedNext',
+		value: function getExpectedNext() {
+			var text = this.text();
+			var phrase = this.phrase;
+			if (text.length >= phrase.length) {
+				return false;
+			}
+			return phrase.charCodeAt(text.length);
+		}
+	}, {
+		key: 'grade',
+		value: function grade() {
+			var text = this.text();
+			var phrase = this.phrase;
+			var length = text.length;
+			var graded = [];
+			var lastLetter = {};
+			for (var i = 0; i < length; i++) {
+				var char = text.charAt(i);
+				var letter = new Letter(char);
+				var isCorrect = char === phrase.charAt(i);
+				lastLetter.isRightEnd = isCorrect && lastLetter.isIncorrect;
+				letter.isIncorrect = !isCorrect;
+				letter.isRightEnd = !isCorrect && i === length - 1;
+				lastLetter = letter;
+				graded.push(letter);
+			}
+			this.children(this.remove);
+			this.text('');
+			this.add(graded);
+		}
+	}, {
+		key: 'enabled',
+		get: function get$$1() {
+			return get(Writer.prototype.__proto__ || Object.getPrototypeOf(Writer.prototype), 'enabled', this);
+		},
+		set: function set$$1(value) {
+			value = !!value;
+			set(Writer.prototype.__proto__ || Object.getPrototypeOf(Writer.prototype), 'enabled', value, this);
+			this.attribute('contentEditable', value);
+		}
+	}, {
+		key: 'phrase',
+		get: function get$$1() {
+			return this.state('phrase');
+		},
+		set: function set$$1(value) {
+			this.state('phrase', value);
+		}
+	}, {
+		key: 'wordCount',
+		get: function get$$1() {
+			return this.words.length;
+		}
+	}, {
+		key: 'words',
+		get: function get$$1() {
+			var text = this.text();
+			if (!text || !text.length) {
+				return [];
+			}
+			var words = text.split(' ');
+			return words;
+		}
+	}, {
+		key: 'characters',
+		get: function get$$1() {
+			var text = this.text();
+			if (!text || !text.length) {
+				return [];
+			}
+			var characters = text.split('');
+			return characters;
+		}
+	}, {
+		key: 'typedCount',
+		get: function get$$1() {
+			return this.state('typedCount');
+		},
+		set: function set$$1(value) {
+			this.state('typedCount', value);
+		}
+	}, {
+		key: 'errorCount',
+		get: function get$$1() {
+			return this.state('errorCount');
+		},
+		set: function set$$1(value) {
+			this.state('errorCount', value);
+		}
+	}, {
+		key: 'allowDeletions',
+		get: function get$$1() {
+			return this.state('allowDeletions');
+		},
+		set: function set$$1(value) {
+			this.state('allowDeletions', !!value);
+		}
+	}, {
+		key: 'allowCursorSet',
+		get: function get$$1() {
+			return this.state('allowCursorSet');
+		},
+		set: function set$$1(value) {
+			this.state('allowCursorSet', !!value);
+		}
+	}, {
+		key: 'allowCheating',
+		get: function get$$1() {
+			return this.state('allowCheating');
+		},
+		set: function set$$1(value) {
+			this.state('allowCheating', !!value);
+		}
+
+		// defaults
+
+	}], [{
+		key: 'allowDeletions',
+		get: function get$$1() {
+			return true;
+		}
+	}, {
+		key: 'allowCursorSet',
+		get: function get$$1() {
+			return false;
+		}
+	}, {
+		key: 'allowCheating',
+		get: function get$$1() {
+			return false;
+		}
+	}, {
+		key: 'typedCount',
+		get: function get$$1() {
+			return 0;
+		}
+	}, {
+		key: 'errorCount',
+		get: function get$$1() {
+			return 0;
+		}
+	}]);
+	return Writer;
+}(Div.implements(Enableable));
+
+exports$1(Writer).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer');
+
+//Utilities
+function now() {
+	return new Date().getTime();
+}
+
+exports$1(now).as('SansTypo/Source/1.0.0/Utilities/now');
+
+//Classes
+//TypeChecks
+//Utilities
+var SEC$1 = 1000; //milliseconds per seconds
+
+var SpeedGame = function (_Distinct) {
+	inherits(SpeedGame, _Distinct);
+
+	function SpeedGame() {
+		classCallCheck(this, SpeedGame);
+		return possibleConstructorReturn(this, (SpeedGame.__proto__ || Object.getPrototypeOf(SpeedGame)).apply(this, arguments));
+	}
+
+	createClass(SpeedGame, [{
+		key: 'begin',
+		value: function begin() {
+			var _this2 = this;
+
+			if (this.isInProgress || this.hasEnded) {
+				return;
+			}
+
+			this.state('isInProgress', true);
+			this.state('startTime', now());
+			var timer = setInterval(function () {
+				_this2.trigger('tick', _this2.elapsedTime);
+			}, this.interval);
+			this.timer = timer;
+			this.trigger('begin');
+		}
+	}, {
+		key: 'end',
+		value: function end() {
+			if (!this.isInProgress || this.hasEnded) {
+				return;
+			}
+
+			clearInterval(this.timer);
+			this.state('hasEnded', true);
+			this.state('isInProgress', false);
+			this.state('stopTime', now());
+			this.trigger('end');
+		}
+	}, {
+		key: 'reset',
+		value: function reset() {
+			var _this3 = this;
+
+			clearInterval(this.timer);
+			var defaults$$1 = SpeedGame.defaults;
+			Object.keys(defaults$$1).forEach(function (key) {
+				_this3.state(key, defaults$$1[key]);
+			});
+		}
+	}, {
+		key: 'elapsedTime',
+		get: function get$$1() {
+			var time = now();
+			var stop = this.stopTime || time;
+			var start = this.startTime || time;
+			return stop - start || false;
+		}
+	}, {
+		key: 'elapsedSeconds',
+		get: function get$$1() {
+			var elapsed = this.elapsedTime;
+			return Number(isNumber(elapsed) ? (elapsed / SEC$1).toFixed(this.precision) : 0);
+		}
+	}, {
+		key: 'precision',
+		get: function get$$1() {
+			return this.state('precision');
+		},
+		set: function set$$1(value) {
+			this.state('precision', value);
+		}
+	}, {
+		key: 'startTime',
+		get: function get$$1() {
+			return this.state('startTime');
+		}
+	}, {
+		key: 'stopTime',
+		get: function get$$1() {
+			return this.state('stopTime');
+		}
+	}, {
+		key: 'isInProgress',
+		get: function get$$1() {
+			return this.state('isInProgress');
+		}
+	}, {
+		key: 'hasEnded',
+		get: function get$$1() {
+			return this.state('hasEnded');
+		}
+		//defaults
+
+	}], [{
+		key: 'defaults',
+		get: function get$$1() {
+			return {
+				hasEnded: false,
+				isInProgress: false,
+				startTime: false,
+				stopTime: false,
+				elapsedTime: false,
+				timer: false,
+				interval: 100, //in milliseconds (0.1 seconds)
+				precision: 1 //digits
+			};
+		}
+	}]);
+	return SpeedGame;
+}(Distinct);
+
+exports$1(SpeedGame).as('SansTypo/Source/1.0.0/Features/TypeSpeed/SpeedGame');
+
+function getNewPhrase() {
+	// set up to mock random latency
+	return new Promise(function (resolve) {
+		setTimeout(function () {
+			resolve("this is a test quote");
+		}, Math.random() * 200);
+	});
+}
+
+//Classes
+//Utilities
+var framing$12 = new StyleSheetRule('.SansTypo.Page.Tester', {
+	position: 'absolute',
+	padding: 0,
+	margin: 0,
+	top: 0,
+	right: 0,
+	bottom: 0,
+	left: 0
+});
+
+exports$1(framing$12).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/framing');
+
+//Classes
+//Utilities
+var penalizer = new StyleSheetRule('.SansTypo.Page.Tester .Cover.as-Penalizer', {
+	backgroundImage: 'url("Assets/Images/cheating.gif")',
+	backgroundRepeat: 'no-repeat',
+	backgroundPosition: 'center'
+});
+
+exports$1(penalizer).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/theme');
+
+var values = {
+	Summary: {
+		width: 200
+	}
+};
+
+//Classes
+//Utilities
+//Styles
+var reader = new StyleSheetRule('.SansTypo.Page.Tester .Reader', {
+	position: 'absolute',
+	top: 0,
+	right: values.Summary.width + 'px',
+	bottom: "50%",
+	left: 0
+});
+
+exports$1(reader).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/reader');
+
+//Classes
+//Utilities
+//Styles
+var summary = new StyleSheetRule('.SansTypo.Page.Tester .Summary', {
+	position: 'absolute',
+	margin: 0,
+	top: 0,
+	right: 0,
+	bottom: 0,
+	width: values.Summary.width + 'px'
+});
+
+exports$1(summary).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/summary');
+
+//Classes
+//Utilities
+//Styles
+var writer = new StyleSheetRule('.SansTypo.Page.Tester .Writer', {
+	position: 'absolute',
+	top: "50%",
+	right: values.Summary.width + 'px',
+	bottom: 0,
+	left: 0
+});
+
+exports$1(writer).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/writer');
+
+//Classes
+//Utilities
+var penalizer$1 = new StyleSheetRule('.SansTypo.Page.Tester .Cover.as-Penalizer', {
+  backgroundImage: 'url("Assets/Images/cheating.gif")',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  lineHeight: 'calc(100vh + 300px)',
+  padding: 0,
+  textTransform: 'uppercase'
+});
+
+exports$1(penalizer$1).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/penalizer');
+
+//Classes
+//Components
+//Constants
+//Features
+//Server
+//Styles
+//Utilities
+var SEC = 1000;
+
 var identity$16 = new Identity({
 	namespace: settings$2.namespace,
 	class: 'Tester',
@@ -5780,15 +7401,164 @@ var Tester = function (_Page) {
 		return _this;
 	}
 
+	//builds the structural elements in the page
+
+
 	createClass(Tester, [{
 		key: 'construct_structure',
-		value: function construct_structure() {}
+		value: function construct_structure() {
+			this.add(new Reader()).as('Reader');
+			this.add(new Summary()).as('Summary');
+			this.add(new Writer()).as('Writer');
+			this.add(new Cover()).as('Penalizer').text('Ah ah ah, no cheating');
+		}
+		//styles the elements built in the structural constructor
+
 	}, {
 		key: 'construct_style',
-		value: function construct_style() {}
+		value: function construct_style() {
+			this.add([framing$12, penalizer, reader, summary, writer, penalizer$1]);
+		}
+		//assigns unique relationships to the structure
+
 	}, {
 		key: 'construct_relationships',
-		value: function construct_relationships() {}
+		value: function construct_relationships() {
+			var _this2 = this;
+
+			var game = new SpeedGame();
+			this.Game = game;
+
+			//on key pressed, begin the game
+			var summary$$1 = this.Summary;
+			var writer$$1 = this.Writer;
+			var summarize = new JSUIFunction$1(function () {
+				_this2.summarize();
+			}).throttle(5);
+			var penalizer$$1 = this.Penalizer;
+
+			// set up cheating penalizer
+			penalizer$$1.nonInteractive = true;
+			penalizer$$1.fadeOut();
+			penalizer$$1.on('click', function () {
+				penalizer$$1.fadeOut();
+			});
+
+			writer$$1.on(['keypress', 'keyup', 'paste', 'drop'], function () {
+				if (game.hasEnded) {
+					return;
+				}
+
+				if (!game.isInProgress) {
+					game.begin();
+					return;
+				}
+
+				if (writer$$1.text().length === _this2.phrase.length) {
+					game.end();
+					return;
+				}
+
+				summarize.execute();
+			});
+
+			game.on('begin', function () {
+				writer$$1.enabled = true;
+				summarize.execute();
+			});
+
+			game.on('tick', function () {
+				summarize.execute();
+			});
+
+			game.on('end', function () {
+				writer$$1.enabled = false;
+				writer$$1.grade();
+				summarize.execute();
+			});
+
+			summary$$1.on('coverStatusChanged', function () {
+				writer$$1.element.focus();
+			});
+
+			summary$$1.on('newRoundRequested', function () {
+				_this2.newRound();
+			});
+
+			writer$$1.on('cheating', function () {
+				var penalizer$$1 = _this2.Penalizer;
+				penalizer$$1.fadeIn();
+				var event = penalizer$$1.on('animationend', function () {
+					setTimeout(function () {
+						penalizer$$1.fadeOut();
+					}, 5 * SEC);
+					event.remove();
+				});
+			});
+
+			this.newRound();
+		}
+	}, {
+		key: 'newPhrase',
+		value: function newPhrase() {
+			var _this3 = this;
+
+			getNewPhrase().then(function (phrase) {
+				_this3.phrase = phrase;
+			});
+		}
+	}, {
+		key: 'newRound',
+		value: function newRound() {
+			this.reset();
+			this.newPhrase();
+		}
+	}, {
+		key: 'summarize',
+		value: function summarize() {
+			var summary$$1 = this.Summary;
+			var writer$$1 = this.Writer;
+			var game = this.Game;
+
+			var written = writer$$1.text();
+			summary$$1.set({
+				elapsedSeconds: game.elapsedSeconds,
+				writtenCharCount: written.length,
+				writtenWordCount: writer$$1.wordCount,
+				typedCount: writer$$1.typedCount,
+				errorCount: writer$$1.errorCount
+			});
+		}
+	}, {
+		key: 'reset',
+		value: function reset() {
+			this.Game.reset();
+			this.Summary.reset();
+			this.Writer.reset();
+		}
+	}, {
+		key: 'Game',
+		get: function get$$1() {
+			return this.state('Game');
+		},
+		set: function set$$1(value) {
+			this.state('Game', value);
+		}
+	}, {
+		key: 'phrase',
+		get: function get$$1() {
+			return this.state('phrase');
+		},
+		set: function set$$1(value) {
+			this.Reader.phrase = value;
+			this.Writer.phrase = value;
+			this.Summary.set({
+				phrase: value,
+				totalCharCount: value.length,
+				totalWordCount: value.split('\s').length
+			});
+			this.state('phrase', value);
+		}
 
 		// defaults
 
@@ -5806,7 +7576,7 @@ exports$1(Tester).as('SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester');
 //Classes
 //Mixins
 //Utilities
-var identity$18 = new Identity({
+var identity$28 = new Identity({
 	class: 'Role',
 	major: 1, minor: 0, patch: 0
 });
@@ -5819,7 +7589,7 @@ var Role = function (_Distinct$implements) {
 
 		var _this = possibleConstructorReturn(this, (Role.__proto__ || Object.getPrototypeOf(Role)).call(this));
 
-		_this.identity = identity$18;
+		_this.identity = identity$28;
 		return _this;
 	}
 
@@ -5831,7 +7601,7 @@ exports$1(Role).as('JSUI/Source/1.0.0/Classes/Core/Role');
 //Classes
 //Mixins
 //Utilities
-var identity$20 = new Identity({
+var identity$30 = new Identity({
 	class: 'Feature',
 	major: 1, minor: 0, patch: 0
 });
@@ -5844,7 +7614,7 @@ var Feature = function (_Distinct$implements) {
 
 		var _this = possibleConstructorReturn(this, (Feature.__proto__ || Object.getPrototypeOf(Feature)).call(this));
 
-		_this.identity = identity$20;
+		_this.identity = identity$30;
 		return _this;
 	}
 
@@ -5857,7 +7627,7 @@ exports$1(Feature).as('JSUI/Source/1.0.0/Classes/Core/Feature');
 //Constants
 //Pages
 //Utilities
-var identity$19 = new Identity({
+var identity$29 = new Identity({
 	namespace: settings$2.namespace,
 	class: 'TypeSpeed',
 	major: 1, minor: 0, patch: 0
@@ -5871,7 +7641,7 @@ var TypeSpeed = function (_Feature) {
 
 		var _this = possibleConstructorReturn(this, (TypeSpeed.__proto__ || Object.getPrototypeOf(TypeSpeed)).call(this));
 
-		_this.identity = identity$19;
+		_this.identity = identity$29;
 		_this.construct('pages');
 		return _this;
 	}
@@ -5907,7 +7677,7 @@ exports$1(TypeSpeed).as('SansTypo/Source/1.0.0/Features/TypeSpeed');
 //Constants
 //Features
 //Utilities
-var identity$17 = new Identity({
+var identity$27 = new Identity({
 	namespace: settings$2.namespace,
 	class: 'Guest',
 	major: 1, minor: 0, patch: 0
@@ -5921,7 +7691,7 @@ var Guest = function (_Role) {
 
 		var _this = possibleConstructorReturn(this, (Guest.__proto__ || Object.getPrototypeOf(Guest)).call(this));
 
-		_this.identity = identity$17;
+		_this.identity = identity$27;
 		_this.construct('features');
 		return _this;
 	}
