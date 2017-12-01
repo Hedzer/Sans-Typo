@@ -97,6 +97,14 @@ class Tester extends Page {
 			summarize.execute();
 		});
 
+		summary.on('coverStatusChanged', () => {
+			writer.element.focus();
+		});
+
+		summary.on('newRoundRequested', () => {
+			this.newRound();
+		});
+
 		this.newRound();
 
 	}
@@ -109,7 +117,6 @@ class Tester extends Page {
 	newRound() {
 		this.reset();
 		this.newPhrase();
-		this.Writer.element.focus();
 	}
 	summarize() {
 		let summary = this.Summary;
@@ -124,9 +131,6 @@ class Tester extends Page {
 			typedCount: writer.typedCount,
 			errorCount: writer.errorCount,
 		});
-		// summary.elapsedSeconds = game.elapsedSeconds;
-		// summary.writtenCharCount = written.length;
-		// summary.writtenWordCount = writer.wordCount;
 
 	}
 	reset() {
