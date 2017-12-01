@@ -30,6 +30,13 @@ class Reader extends Div {
 		this.add(theme);
 	}
 
+	get phrase() {
+		return this.text();
+	}
+	set phrase(value) {
+		this.text(value);
+		this.trigger('phraseChanged', value);
+	}
 }
 
 export default Reader;
