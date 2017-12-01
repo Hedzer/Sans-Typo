@@ -18,10 +18,9 @@
   },
   "homepage": "https://github.com/Hedzer/Sans-Typo#readme",
   "window": {
-    "title": "Sans Typo",
-    "icon": "link.png",
-    "toolbar": true,
-    "frame": false,
+    "title": " ",
+    "toolbar": false,
+    "frame": true,
     "width": 800,
     "height": 500
   },
