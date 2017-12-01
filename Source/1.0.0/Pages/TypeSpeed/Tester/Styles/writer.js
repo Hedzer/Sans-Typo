@@ -8,7 +8,7 @@ import exports from 'Parcello/exports';
 //Styles
 import values from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/values';
 
-let writer = new Rule(`.SansTypo.Page.Tester .Writer`, {
+let writer = new Rule('.SansTypo.Page.Tester .Writer', {
 	position: 'absolute',
 	top: "50%",
 	right: `${values.Summary.width}px`,

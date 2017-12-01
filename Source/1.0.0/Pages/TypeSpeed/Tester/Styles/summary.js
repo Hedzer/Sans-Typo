@@ -8,9 +8,8 @@ import exports from 'Parcello/exports';
 //Styles
 import values from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester/Styles/values';
 
-let summary = new Rule(`.SansTypo.Page.Tester .Summary`, {
+let summary = new Rule('.SansTypo.Page.Tester .Summary', {
 	position: 'absolute',
-	padding: 0,
 	margin: 0,
 	top: 0,
 	right: 0,

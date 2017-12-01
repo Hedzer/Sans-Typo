@@ -5,7 +5,7 @@ import Rule from 'JSUI/Source/1.0.0/Classes/Style/SheetRule';
 //Utilities
 import exports from 'Parcello/exports';
 
-let framing = new Rule(`.SansTypo.Page.Tester`, {
+let framing = new Rule('.SansTypo.Page.Tester', {
 	position: 'absolute',
 	padding: 0,
 	margin: 0,
