@@ -14,7 +14,7 @@ let theme = new Rule(selector, {
 });
 
 let noFocus = new Rule(`${selector}:focus`, {
-    outline: 'none',
+	outline: 'none',
 });
 
 const exported = [ theme, noFocus ]
