@@ -2,10 +2,12 @@
 //Classes
 import Div from 'JSUI/Source/1.0.0/Classes/Elements/Div';
 import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
-import JFunction from 'JSUI/Source/1.0.0/Classes/Core/Function';
 
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
+
+//Mixins
+import Enableable from 'JSUI/Source/1.0.0/Mixins/Enableable';
 
 //Styles
 import framing from 'SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/framing';
@@ -28,7 +30,7 @@ const DELETE_KEYS = [ BACKSPACE, DEL ];
 const CURSOR_KEYS = [ LEFT, UP, RIGHT, DOWN ];
 const CHEAT_EVENTS = ['mousedown', 'mouseup', 'paste', 'drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
 
-class Writer extends Div {
+class Writer extends Div.implements(Enableable) {
 	constructor() {
 		super();
 		this.identity = identity;
@@ -43,8 +45,21 @@ class Writer extends Div {
 	}
 	construct_relationships() {
 
+		this.on('keypress', (e) => {
+			if (!this.enabled) { return e.preventDefault(); }
+
+			// check typed vs errors
+			let code = (e.which || e.keyCode || e.charCode);
+			let expected = this.getExpectedNext();
+			this.typedCount++;
+			if (expected !== code) { this.errorCount++; }
+		});
+
 		//allowDeletions & cursorMovement
 		this.on('keydown', (e) => {
+			if (!this.enabled) { return e.preventDefault(); }
+
+			//check for deletions & caret moves
 			let code = (e.which || e.keyCode || e.charCode);
 			let deletionsAllowed = this.allowDeletions || !DELETE_KEYS.includes(code);
 			let cursorMovingAllowed = this.allowCursorSet || !CURSOR_KEYS.includes(code);
@@ -61,12 +76,13 @@ class Writer extends Div {
 			e.preventDefault();
 		});
 
-		this.on('mouseover', () => {
+		this.on('mouseover', (e) => {
+			if (!this.enabled) { return; }
+
 			this.element.focus();
-			let position = this.element.textContent.length;
+			let position = this.text().length;
 			this.setCursor(position);
 		});
-
 	}
 
 	setCursor(index) {
@@ -81,23 +97,65 @@ class Writer extends Div {
 		selection.removeAllRanges();
 		selection.addRange(range);
 	}
+	reset() {
+		this.text('');
+		this.typedCount = 0;
+		this.errorCount = 0;
+		this.enabled = true;
+	}
+	//override, contentEditable messes with things
+	text(text) {
+		if (!arguments.length) {
+			return this.element.textContent;
+		}
+
+		this.element.textContent = text;
+	}
+
+	getExpectedNext() {
+		let text = this.text();
+		let phrase = this.phrase;
+		if (text.length >= phrase.length) { return false; }
+		return phrase.charCodeAt(text.length);
+	}
+
+	get phrase() {
+		return this.state('phrase');
+	}
+	set phrase(value) {
+		this.state('phrase', value);
+	}
 
 	get wordCount() {
 		return this.words.length;
 	}
 
 	get words() {
-		let text = this.element.textContent;
+		let text = this.text();
 		if (!text || !text.length) { return []; }
 		let words = text.split(' ');
 		return words;
 	}
 
 	get characters() {
-		let text = this.element.textContent;
+		let text = this.text();
 		if (!text || !text.length) { return []; }
 		let characters = text.split('');
 		return characters;
+	}
+
+	get typedCount() {
+		return this.state('typedCount');
+	}
+	set typedCount(value) {
+		this.state('typedCount', value);
+	}
+
+	get errorCount() {
+		return this.state('errorCount');
+	}
+	set errorCount(value) {
+		this.state('errorCount', value);
 	}
 
 	get allowDeletions() {
@@ -121,16 +179,9 @@ class Writer extends Div {
 		this.state('allowCheating', !!value);
 	}
 
-	get expects() {
-		return this.state('expects');
-	}
-	set expects(value) {
-		this.state('expects', value);
-	}
-
 	// defaults
 	static get allowDeletions() {
-		return false;
+		return true;
 	}
 	
 	static get allowCursorSet() {
@@ -139,6 +190,14 @@ class Writer extends Div {
 
 	static get allowCheating() {
 		return false;
+	}
+
+	static get typedCount() {
+		return 0;
+	}
+
+	static get errorCount() {
+		return 0;
 	}
 
 }
