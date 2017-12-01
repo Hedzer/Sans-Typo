@@ -11,7 +11,7 @@ let framing = new Rule('.SansTypo.Reader', {
 	margin: 0,
 	textAlign: 'justify',
 	textAlignLast: 'center',
-	fontSize: '32px',
+	fontSize: '4vmin',
 	zIndex: 1,
 });
 

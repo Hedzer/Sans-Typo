@@ -10,6 +10,7 @@ let theme = new Rule('.SansTypo.Reader', {
 	fontFamily: '"Inconsolata", monospace',
 	boxShadow: '0 0 5px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 0, 0, 0.1)',
 	color: '#646464',
+	userSelect: 'none',
 });
 
 export default theme;
