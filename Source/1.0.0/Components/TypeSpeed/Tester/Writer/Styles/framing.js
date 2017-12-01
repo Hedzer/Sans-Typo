@@ -13,7 +13,7 @@ let framing = new Rule(selector, {
 	margin: 0,
 	textAlign: 'justify',
 	textAlignLast: 'center',
-	fontSize: '32px',
+	fontSize: '4vmin',
 	zIndex: 0,
 });
 
@@ -21,8 +21,8 @@ let empty = new Rule(`${selector}:empty`, {
 	paddingLeft:"calc(50% - 100px)",
 });
 
-let out = [ framing, empty ];
+let exported = [ framing, empty ];
 
-export default out;
+export default exported;
 
-exports(out).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/framing');
+exports(exported).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/framing');

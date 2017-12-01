@@ -17,8 +17,8 @@ let noFocus = new Rule(`${selector}:focus`, {
     outline: 'none',
 });
 
-const out = [ theme, noFocus ]
+const exported = [ theme, noFocus ]
 
-export default out;
+export default exported;
 
-exports(out).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/theme');
+exports(exported).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Writer/Styles/theme');
