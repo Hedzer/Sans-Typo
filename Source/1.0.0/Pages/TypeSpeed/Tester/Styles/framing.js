@@ -9,7 +9,7 @@ let framing = new Rule('.SansTypo.Page.Tester', {
 	position: 'absolute',
 	padding: 0,
 	margin: 0,
-	top: 0,
+	top: '45px',
 	right: 0,
 	bottom: 0,
 	left: 0,

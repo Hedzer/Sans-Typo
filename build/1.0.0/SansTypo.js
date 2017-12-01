@@ -7297,7 +7297,7 @@ var framing$12 = new StyleSheetRule('.SansTypo.Page.Tester', {
 	position: 'absolute',
 	padding: 0,
 	margin: 0,
-	top: 0,
+	top: '45px',
 	right: 0,
 	bottom: 0,
 	left: 0
@@ -7778,7 +7778,82 @@ var SansTypo = function (_Application) {
 
 exports$1(SansTypo).as('SansTypo/Source/1.0.0/Applications/SansTypo');
 
+//Classes
+//Utilities
+var selector$9 = '.SansTypo.AppTitle';
+
+var framing$14 = new StyleSheetRule(selector$9, {
+	position: 'absolute',
+	top: 0,
+	right: 0,
+	left: 0,
+	height: '45px',
+	padding: 0,
+	margin: 0,
+	textAlign: 'center',
+	fontSize: '37px',
+	lineHeight: '41px'
+});
+
+exports$1(framing$14).as('SansTypo/Source/1.0.0/Components/General/AppTitle/Styles/framing');
+
+//Classes
+//Utilities
+var selector$10 = '.SansTypo.AppTitle';
+
+var theme$13 = new StyleSheetRule(selector$10, {
+	backgroundColor: '#b5d6f3',
+	color: '#5f9ea0',
+	fontFamily: ' "Lobster", cursive'
+});
+
+exports$1(theme$13).as('SansTypo/Source/1.0.0/Components/General/AppTitle/Styles/theme');
+
+//Classes
+//Constants
+//Styles
+//Utilities
+var identity$31 = new Identity({
+	namespace: settings$2.namespace,
+	class: 'AppTitle',
+	major: 1, minor: 0, patch: 0
+});
+
+var AppTitle = function (_Navigation) {
+	inherits(AppTitle, _Navigation);
+
+	function AppTitle() {
+		classCallCheck(this, AppTitle);
+
+		var _this = possibleConstructorReturn(this, (AppTitle.__proto__ || Object.getPrototypeOf(AppTitle)).call(this));
+
+		_this.identity = identity$31;
+		return _this;
+	}
+
+	createClass(AppTitle, [{
+		key: 'construct_structure',
+		value: function construct_structure() {
+			this.text('Sans Typo');
+		}
+	}, {
+		key: 'construct_style',
+		value: function construct_style() {
+			this.add(framing$14);
+			this.add(theme$13);
+		}
+	}]);
+	return AppTitle;
+}(Navigation);
+
+exports$1(AppTitle).as('SansTypo/Source/1.0.0/Components/General/AppTitle');
+
 //Applications
+// navigation could auto add, but this isn't goint to navigate, so we'll leave it neutered
+var Title = new AppTitle();
+Title.addTo(document.body);
+
+// applications auto add themselves
 var App = new SansTypo();
 
 return App;
