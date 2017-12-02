@@ -6101,8 +6101,6 @@ var framing = new StyleSheetRule('.SansTypo.Reader', {
 	position: 'relative',
 	padding: '50px',
 	margin: 0,
-	textAlign: 'justify',
-	textAlignLast: 'center',
 	fontSize: '4vmin',
 	zIndex: 1
 });
@@ -6196,22 +6194,26 @@ var framing$2 = new StyleSheetRule(selector, {
 	display: 'inline-block',
 	boxSizing: 'border-box',
 	width: '100%',
-	margin: '10px 0',
+	margin: '1vh 0',
 	overflow: 'hidden'
 });
 
 var title = new StyleSheetRule(selector + ' .as-Title', {
-	display: 'inline-block',
-	padding: '5px',
+	display: 'block',
+	boxSizing: 'border-box',
 	width: '100%',
-	fontSize: '2vh'
+	height: '3.5vh',
+	fontSize: '2vh',
+	lineHeight: '3.5vh'
 });
 
 var info = new StyleSheetRule(selector + ' .as-Info', {
-	display: 'inline-block',
-	padding: '5px',
+	display: 'block',
+	boxSizing: 'border-box',
 	width: '100%',
-	fontSize: '3vh'
+	height: '6vh',
+	fontSize: '4vh',
+	lineHeight: '6vh'
 });
 
 var exported$2 = [framing$2, title, info];
@@ -6465,11 +6467,15 @@ var seconds = new StyleSheetRule(selector$5 + ' .Stat.as-TimeInSeconds .as-Title
 	backgroundColor: '#f5f8fa'
 });
 
+var wordCount = new StyleSheetRule(selector$5 + ' .Stat.as-WordCount .as-Title', {
+	backgroundColor: '#f5fafa'
+});
+
 var wpm = new StyleSheetRule(selector$5 + ' .Stat.as-WordsPerMinute .as-Title', {
 	backgroundColor: '#f6faf5'
 });
 
-var keysPressed = new StyleSheetRule(selector$5 + ' .Stat.as-KeysPressed .as-Title', {
+var keysPressed = new StyleSheetRule(selector$5 + ' .Stat.as-LettersTyped .as-Title', {
 	backgroundColor: '#f5f5fa'
 });
 
@@ -6494,7 +6500,7 @@ var newRoundActive = new StyleSheetRule(selector$5 + ' .Button.as-NewRound:activ
 	backgroundColor: '#dbf9be'
 });
 
-var exported$5 = [theme$6, seconds, wpm, keysPressed, errors, errorRate, newRound$1, newRoundActive];
+var exported$5 = [theme$6, seconds, wordCount, wpm, keysPressed, errors, errorRate, newRound$1, newRoundActive];
 
 exports$1(exported$5).as('SansTypo/Source/1.0.0/Components/TypeSpeed/Tester/Summary/Styles/theme');
 
@@ -6517,12 +6523,16 @@ var DEFAULTS = {
 		title: 'Seconds',
 		info: '0.0'
 	},
+	WordCount: {
+		title: 'Word Count',
+		info: '0'
+	},
 	WordsPerMinute: {
 		title: 'Words Per Minute',
 		info: '0.0'
 	},
-	KeysPressed: {
-		title: 'Keys Pressed',
+	LettersTyped: {
+		title: 'Letters Typed',
 		info: '0'
 	},
 	Errors: {
@@ -6552,9 +6562,11 @@ var Summary = function (_Div) {
 		value: function construct_structure() {
 			this.add(new Stat()).as('TimeInSeconds').set(DEFAULTS.TimeInSeconds);
 
+			this.add(new Stat()).as('WordCount').set(DEFAULTS.WordCount);
+
 			this.add(new Stat()).as('WordsPerMinute').set(DEFAULTS.WordsPerMinute);
 
-			this.add(new Stat()).as('KeysPressed').set(DEFAULTS.KeysPressed);
+			this.add(new Stat()).as('LettersTyped').set(DEFAULTS.LettersTyped);
 
 			this.add(new Stat()).as('Errors').set(DEFAULTS.Errors);
 
@@ -6589,7 +6601,7 @@ var Summary = function (_Div) {
 			});
 
 			// on typed count change, remove cover
-			this.on('typedCountChanged', function () {
+			this.on('gameBegin', function () {
 				_this2.Instructions.fadeOut();
 			});
 
@@ -6615,8 +6627,9 @@ var Summary = function (_Div) {
 
 			var wordsPerMinute = (writtenWordCount && seconds ? writtenWordCount / seconds : 0) * MIN;
 			this.TimeInSeconds.info = seconds.toFixed(1);
+			this.WordCount.info = writtenWordCount;
 			this.WordsPerMinute.info = wordsPerMinute.toFixed(1);
-			this.KeysPressed.info = charsTyped;
+			this.LettersTyped.info = charsTyped;
 			this.Errors.info = errors;
 			this.ErrorRate.info = errorRate + '%';
 		}
@@ -6838,14 +6851,12 @@ var framing$10 = new StyleSheetRule(selector$7, {
 	position: 'relative',
 	padding: '50px',
 	margin: 0,
-	textAlign: 'justify',
-	textAlignLast: 'center',
 	fontSize: '4vmin',
 	zIndex: 0
 });
 
 var empty = new StyleSheetRule(selector$7 + ':empty', {
-	paddingLeft: "calc(50% - 100px)"
+	paddingLeft: "50px"
 });
 
 var exported$7 = [framing$10, empty];
@@ -7282,11 +7293,19 @@ var SpeedGame = function (_Distinct) {
 
 exports$1(SpeedGame).as('SansTypo/Source/1.0.0/Features/TypeSpeed/SpeedGame');
 
+//Utilities
+var quotes = ["Two roads diverged in a wood, and I-I took the one less traveled by, And that has made all the difference.", "I\'ve missed more than 9000 shots in my career. I\'ve lost almost 300 games. 26 times I\'ve been trusted to take the game winning shot and missed. I\'ve failed over and over and over again in my life. And that is why I succeed.", "Twenty years from now you will be more disappointed by the things that you didn\'t do than by the ones you did do, so throw off the bowlines, sail away from safe harbor, catch the trade winds in your sails.  Explore, Dream, Discover.", "The most common way people give up their power is by thinking they don\'t have any.", "The best time to plant a tree was 20 years ago. The second best time is now.", "Every child is an artist.  The problem is how to remain an artist once he grows up.", "You can never cross the ocean until you have the courage to lose sight of the shore.", "I\'ve learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.", "The two most important days in your life are the day you are born and the day you find out why.", "Whatever you can do, or dream you can, begin it.  Boldness has genius, power and magic in it.", "People often say that motivation doesn\'t last. Well, neither does bathing.  That\'s why we recommend it daily.", "If you hear a voice within you say \"you cannot paint,\" then by all means paint and that voice will be silenced.", "Ask and it will be given to you; search, and you will find; knock and the door will be opened for you.", "When I stand before God at the end of my life, I would hope that I would not have a single bit of talent left and could say, I used everything you gave me.", "Few things can help an individual more than to place responsibility on him, and to let him know that you trust him.", "We can easily forgive a child who is afraid of the dark; the real tragedy of life is when men are afraid of the light.", "When I was 5 years old, my mother always told me that happiness was the key to life.  When I went to school, they asked me what I wanted to be when I grew up.  I wrote down ‘happy\'.  They told me I didn\'t understand the assignment, and I told them they didn\'t understand life.", "When one door of happiness closes, another opens, but often we look so long at the closed door that we do not see the one that has been opened for us.", "How wonderful it is that nobody need wait a single moment before starting to improve the world.", "Life is not measured by the number of breaths we take, but by the moments that take our breath away.", "If you\'re offered a seat on a rocket ship, don\'t ask what seat! Just get on.", "First, have a definite, clear practical ideal; a goal, an objective. Second, have the necessary means to achieve your ends; wisdom, money, materials, and methods. Third, adjust all your means to that end.", "You can\'t fall if you don\'t climb.  But there\'s no joy in living your whole life on the ground.", "We must believe that we are gifted for something, and that this thing, at whatever cost, must be attained.", "I have been impressed with the urgency of doing. Knowing is not enough; we must apply. Being willing is not enough; we must do.", "Limitations live only in our minds.  But if we use our imaginations, our possibilities become limitless.", "You take your life in your own hands, and what happens? A terrible thing, no one to blame.", "What\'s money? A man is a success if he gets up in the morning and goes to bed at night and in between does what he wants to do.", "In order to succeed, your desire for success should be greater than your fear of failure.", "The person who says it cannot be done should not interrupt the person who is doing it.", "A truly rich man is one whose children run into his arms when his hands are empty.", "It is not what you do for your children, but what you have taught them to do for themselves, that will make them successful human beings.", "If you want your children to turn out well, spend twice as much time with them, and half as much money.", "The battles that count aren\'t the ones for gold medals. The struggles within yourself–the invisible battles inside all of us–that\'s where it\'s at.", "I have learned over the years that when one\'s mind is made up, this diminishes fear.", "If you look at what you have in life, you\'ll always have more. If you look at what you don\'t have in life, you\'ll never have enough.", "It\'s your place in the world; it\'s your life. Go on and do all you can with it, and make it the life you want to live.", "The question isn\'t who is going to let me; it\'s who is going to stop me.", "When everything seems to be going against you, remember that the airplane takes off against the wind, not with it."];
+
+exports$1(quotes).as('SansTypo/Data/quotes');
+
+//Data
 function getNewPhrase() {
 	// set up to mock random latency
 	return new Promise(function (resolve) {
 		setTimeout(function () {
-			resolve("this is a test quote");
+			var random = Math.ceil(Math.random() * quotes.length + 1) % quotes.length;
+			var quote = quotes[random];
+			resolve(quote);
 		}, Math.random() * 200);
 	});
 }
@@ -7465,6 +7484,7 @@ var Tester = function (_Page) {
 			game.on('begin', function () {
 				writer$$1.enabled = true;
 				summarize.execute();
+				summary$$1.trigger('gameBegin');
 			});
 
 			game.on('tick', function () {
@@ -7475,6 +7495,7 @@ var Tester = function (_Page) {
 				writer$$1.enabled = false;
 				writer$$1.grade();
 				summarize.execute();
+				summary$$1.trigger('gameEnd');
 			});
 
 			summary$$1.on('coverStatusChanged', function () {
@@ -7792,7 +7813,8 @@ var framing$14 = new StyleSheetRule(selector$9, {
 	margin: 0,
 	textAlign: 'center',
 	fontSize: '37px',
-	lineHeight: '41px'
+	lineHeight: '41px',
+	zIndex: 100
 });
 
 exports$1(framing$14).as('SansTypo/Source/1.0.0/Components/General/AppTitle/Styles/framing');
@@ -7804,7 +7826,9 @@ var selector$10 = '.SansTypo.AppTitle';
 var theme$13 = new StyleSheetRule(selector$10, {
 	backgroundColor: '#b5d6f3',
 	color: '#5f9ea0',
-	fontFamily: ' "Lobster", cursive'
+	fontFamily: '"Lobster", cursive',
+	boxShadow: 'rgba(0, 0, 0, 0.2) 0px 0px 20px, rgba(0, 0, 0, 0.1) 0px 0px 200px',
+	userSelect: 'none'
 });
 
 exports$1(theme$13).as('SansTypo/Source/1.0.0/Components/General/AppTitle/Styles/theme');

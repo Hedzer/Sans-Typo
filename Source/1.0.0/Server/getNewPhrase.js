@@ -2,6 +2,9 @@
 //Data
 import quotes from 'SansTypo/Data/quotes';
 
+//Utilities
+import exports from 'Parcello/exports';
+
 export default function getNewPhrase() { // set up to mock random latency
 	return new Promise( resolve => {
 		setTimeout(() => {
@@ -11,3 +14,5 @@ export default function getNewPhrase() { // set up to mock random latency
 		}, Math.random() * 200);
 	})
 }
+
+exports(getNewPhrase).as('SansTypo/Source/1.0.0/Server/getNewPhrase');

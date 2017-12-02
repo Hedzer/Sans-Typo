@@ -70,7 +70,6 @@ class Tester extends Page {
 		let game = new SpeedGame();
 		this.Game = game;
 
-		//on key pressed, begin the game
 		let summary = this.Summary;
 		let writer = this.Writer;
 		let summarize = new JFunction(() => { this.summarize(); }).throttle(5);
@@ -83,6 +82,7 @@ class Tester extends Page {
 			penalizer.fadeOut();
 		});
 
+		//on key pressed, begin the game
 		writer.on([ 'keypress', 'keyup', 'paste', 'drop' ], () => {
 			if (game.hasEnded) { return; }
 
