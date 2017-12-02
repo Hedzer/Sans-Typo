@@ -21,13 +21,15 @@
     "title": " ",
     "toolbar": false,
     "frame": true,
-    "width": 800,
-    "height": 500
+    "min_width": 500,
+    "min_height": 500,
+    "width": 650,
+    "height": 650,
+    "position": "center"
   },
   "webkit": {
     "plugin": true
   },
-  "chromium-args": "--disable-gpu",
   "parcello": {
     "namespace": "SansTypo",
     "folders": {
