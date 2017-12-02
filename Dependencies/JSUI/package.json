@@ -1,0 +1,79 @@
+{
+  "name": "jsui",
+  "version": "1.0.0",
+  "description": "A lightweight js centric UI framework",
+  "main": "JSUI.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hedzer/jsui.git"
+  },
+  "keywords": [
+    "js",
+    "ui",
+    "framework"
+  ],
+  "author": "Hedzer Ferwerda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hedzer/jsui/issues"
+  },
+  "homepage": "https://github.com/Hedzer/jsui#readme",
+  "parcello": {
+    "namespace": "JSUI",
+    "folders": {
+      "source": "Source",
+      "build": "build",
+      "dependency": "Dependencies",
+      "external": "External",
+      "tests": "Tests",
+      "documentation": "Documentation"
+    },
+    "profiles": {
+      "default": {
+        "extensions": [
+          "js"
+        ],
+        "source": {
+          "file": "entry.js",
+          "auto-externalize": true
+        },
+        "build": {
+          "file": "JSUI.js"
+        },
+        "dependency": {
+          "install": {
+            "npm": true,
+            "bower": true,
+            "tsd": true,
+            "typings": true,
+            "composer": true,
+            "pip": true,
+            "git": true
+          },
+          "repos": {},
+          "remap": {},
+          "search": {
+            "active": true,
+            "cache": true,
+            "folders": [
+              "node_modules"
+            ]
+          },
+          "external": {}
+        },
+        "external": {
+          "ignore": [],
+          "copy": []
+        },
+        "tests": {},
+        "documentation": {}
+      }
+    }
+  }
+}
