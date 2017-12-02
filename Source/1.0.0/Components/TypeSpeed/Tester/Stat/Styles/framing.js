@@ -11,22 +11,26 @@ let framing = new Rule(selector, {
 	display: 'inline-block',
 	boxSizing: 'border-box',
 	width: '100%',
-	margin: '10px 0',
+	margin: '1vh 0',
 	overflow: 'hidden',
 });
 
 let title = new Rule(`${selector} .as-Title`, {
-	display: 'inline-block',
-	padding: '5px',
+	display: 'block',
+	boxSizing: 'border-box',
 	width: '100%',
+	height: '3.5vh',
 	fontSize: '2vh',
+	lineHeight: '3.5vh',
 });
 
 let info = new Rule(`${selector} .as-Info`, {
-	display: 'inline-block',
-	padding: '5px',
+	display: 'block',
+	boxSizing: 'border-box',
 	width: '100%',
-	fontSize: '3vh',
+	height: '6vh',
+	fontSize: '4vh',
+	lineHeight: '6vh'
 });
 
 let exported = [ framing, title, info ];

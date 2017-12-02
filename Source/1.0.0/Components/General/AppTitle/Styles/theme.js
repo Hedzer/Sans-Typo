@@ -10,9 +10,9 @@ const selector = '.SansTypo.AppTitle';
 let theme = new Rule(selector, {
 	backgroundColor: '#b5d6f3',
 	color: '#5f9ea0',
-	fontFamily: ' "Lobster", cursive',
+	fontFamily: '"Lobster", cursive',
 	boxShadow: 'rgba(0, 0, 0, 0.2) 0px 0px 20px, rgba(0, 0, 0, 0.1) 0px 0px 200px',
-	user-select: 'none',
+	userSelect: 'none',
 });
 
 export default theme;
