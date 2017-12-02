@@ -1,7 +1,9 @@
 
 # Custom Ignores
-# [Dd]ependencies
+[Dd]ependencies
 [Ee]xternal
+
+![Dd]ependencies/JSUI
 
 # Standard Node Ignores
 
