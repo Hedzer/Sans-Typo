@@ -2,10 +2,13 @@
 //Classes
 import Application from 'JSUI/Source/1.0.0/Classes/Core/Application';
 import Identity from 'JSUI/Source/1.0.0/Classes/Core/Identity';
-import Tester from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester';
 
 //Constants
 import settings from 'SansTypo/Source/1.0.0/Constants/settings';
+
+//Pages
+import Tester from 'SansTypo/Source/1.0.0/Pages/TypeSpeed/Tester';
+
 
 //Roles
 import Guest from 'SansTypo/Source/1.0.0/Roles/Guest';
