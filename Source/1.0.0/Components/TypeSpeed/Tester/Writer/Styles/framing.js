@@ -16,7 +16,7 @@ let framing = new Rule(selector, {
 });
 
 let empty = new Rule(`${selector}:empty`, {
-	paddingLeft:"calc(50% - 100px)",
+	paddingLeft:"50px",
 });
 
 let exported = [ framing, empty ];
