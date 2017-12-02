@@ -9,8 +9,6 @@ let framing = new Rule('.SansTypo.Reader', {
 	position: 'relative',
 	padding: '50px',
 	margin: 0,
-	textAlign: 'justify',
-	textAlignLast: 'center',
 	fontSize: '4vmin',
 	zIndex: 1,
 });

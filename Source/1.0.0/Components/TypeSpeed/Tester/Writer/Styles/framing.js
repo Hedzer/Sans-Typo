@@ -11,8 +11,6 @@ let framing = new Rule(selector, {
 	position: 'relative',
 	padding: '50px',
 	margin: 0,
-	textAlign: 'justify',
-	textAlignLast: 'center',
 	fontSize: '4vmin',
 	zIndex: 0,
 });
