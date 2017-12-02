@@ -1,6 +1,6 @@
 
 # Custom Ignores
-[Dd]ependencies
+# [Dd]ependencies
 [Ee]xternal
 
 # Standard Node Ignores
