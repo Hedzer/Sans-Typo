@@ -17,11 +17,15 @@ let seconds = new Rule(`${selector} .Stat.as-TimeInSeconds .as-Title`, {
 	backgroundColor: '#f5f8fa',
 });
 
+let wordCount = new Rule(`${selector} .Stat.as-WordCount .as-Title`, {
+	backgroundColor: '#f5fafa',
+});
+
 let wpm = new Rule(`${selector} .Stat.as-WordsPerMinute .as-Title`, {
 	backgroundColor: '#f6faf5',
 });
 
-let keysPressed = new Rule(`${selector} .Stat.as-KeysPressed .as-Title`, {
+let keysPressed = new Rule(`${selector} .Stat.as-LettersTyped .as-Title`, {
 	backgroundColor: '#f5f5fa',
 });
 
@@ -46,7 +50,7 @@ let newRoundActive = new Rule(`${selector} .Button.as-NewRound:active`, {
 	backgroundColor: '#dbf9be',
 });
 
-let exported = [ theme, seconds, wpm, keysPressed, errors, errorRate, newRound, newRoundActive ];
+let exported = [ theme, seconds, wordCount, wpm, keysPressed, errors, errorRate, newRound, newRoundActive ];
 
 export default exported;
 

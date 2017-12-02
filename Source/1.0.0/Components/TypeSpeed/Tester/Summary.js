@@ -36,13 +36,13 @@ const DEFAULTS = {
 		title: 'Seconds',
 		info: '0.0',
 	},
+	WordCount: {
+		title: 'Word Count',
+		info: '0',
+	},
 	WordsPerMinute: {
 		title: 'Words Per Minute',
 		info: '0.0',
-	},
-	WordsTyped: {
-		title: 'Words Typed',
-		info: '0',
 	},
 	LettersTyped: {
 		title: 'Letters Typed',
@@ -68,11 +68,11 @@ class Summary extends Div {
 		this.add(new Stat()).as('TimeInSeconds')
 			.set(DEFAULTS.TimeInSeconds);
 
+		this.add(new Stat()).as('WordCount')
+			.set(DEFAULTS.WordCount);
+
 		this.add(new Stat()).as('WordsPerMinute')
 			.set(DEFAULTS.WordsPerMinute);
-
-		this.add(new Stat()).as('WordsTyped')
-			.set(DEFAULTS.WordsTyped);
 
 		this.add(new Stat()).as('LettersTyped')
 			.set(DEFAULTS.LettersTyped);
@@ -129,8 +129,8 @@ class Summary extends Div {
 
 		let wordsPerMinute = (writtenWordCount && seconds ? writtenWordCount / seconds : 0) * MIN;
 		this.TimeInSeconds.info = seconds.toFixed(1);
+		this.WordCount.info = writtenWordCount;
 		this.WordsPerMinute.info = wordsPerMinute.toFixed(1);
-		this.WordsTyped.info = writtenWordCount;
 		this.LettersTyped.info = charsTyped;
 		this.Errors.info = errors;
 		this.ErrorRate.info = `${errorRate}%`;
