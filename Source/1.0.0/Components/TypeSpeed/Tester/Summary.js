@@ -103,7 +103,7 @@ class Summary extends Div {
 		this.on(changes, () => { calculate.execute() });
 
 		// on typed count change, remove cover
-		this.on('typedCountChanged', () => {
+		this.on('gameBegin', () => {
 			this.Instructions.fadeOut();
 		});
 

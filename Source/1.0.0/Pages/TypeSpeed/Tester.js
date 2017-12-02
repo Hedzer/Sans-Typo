@@ -102,6 +102,7 @@ class Tester extends Page {
 		game.on('begin', () => {
 			writer.enabled = true;
 			summarize.execute();
+			summary.trigger('gameBegin');
 		});
 
 		game.on('tick', () => {
@@ -112,6 +113,7 @@ class Tester extends Page {
 			writer.enabled = false;
 			writer.grade();
 			summarize.execute();
+			summary.trigger('gameEnd');
 		});
 
 		summary.on('coverStatusChanged', () => {
