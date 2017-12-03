@@ -6030,6 +6030,23 @@ var Application = function (_Distinct$implements) {
 
 exports$1(Application).as('JSUI/Source/1.0.0/Classes/Core/Application');
 
+const ENV = {
+				dev: true,
+				prod: false,
+				version: '1.0.0',
+				profile: 'default',
+			};
+
+//Constants
+//Utilities
+var settings$2 = {
+	namespace: 'SansTypo',
+	Development: ENV.dev,
+	Production: ENV.prod
+};
+
+exports$1(settings$2).as('SansTypo/Source/1.0.0/Constants/settings');
+
 //Classes
 //Utilities
 var identity$17 = new Identity({
@@ -6077,23 +6094,6 @@ var Div = function (_Element) {
 }(Element$1);
 
 exports$1(Div).as('JSUI/Source/1.0.0/Classes/Elements/Div');
-
-const ENV = {
-				dev: true,
-				prod: false,
-				version: '1.0.0',
-				profile: 'default',
-			};
-
-//Constants
-//Utilities
-var settings$2 = {
-	namespace: 'SansTypo',
-	Development: ENV.dev,
-	Production: ENV.prod
-};
-
-exports$1(settings$2).as('SansTypo/Source/1.0.0/Constants/settings');
 
 //Classes
 //Utilities
@@ -7299,6 +7299,7 @@ var quotes = ["Two roads diverged in a wood, and I-I took the one less traveled 
 exports$1(quotes).as('SansTypo/Data/quotes');
 
 //Data
+//Utilities
 function getNewPhrase() {
 	// set up to mock random latency
 	return new Promise(function (resolve) {
@@ -7309,6 +7310,8 @@ function getNewPhrase() {
 		}, Math.random() * 200);
 	});
 }
+
+exports$1(getNewPhrase).as('SansTypo/Source/1.0.0/Server/getNewPhrase');
 
 //Classes
 //Utilities
@@ -7448,7 +7451,6 @@ var Tester = function (_Page) {
 			var game = new SpeedGame();
 			this.Game = game;
 
-			//on key pressed, begin the game
 			var summary$$1 = this.Summary;
 			var writer$$1 = this.Writer;
 			var summarize = new JSUIFunction$1(function () {
@@ -7463,6 +7465,7 @@ var Tester = function (_Page) {
 				penalizer$$1.fadeOut();
 			});
 
+			//on key pressed, begin the game
 			writer$$1.on(['keypress', 'keyup', 'paste', 'drop'], function () {
 				if (game.hasEnded) {
 					return;
@@ -7746,6 +7749,7 @@ exports$1(Guest).as('SansTypo/Source/1.0.0/Roles/Guest');
 
 //Classes
 //Constants
+//Pages
 //Roles
 //Utilities
 var identity = new Identity({
